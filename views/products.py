@@ -87,34 +87,55 @@ class ProductDialog:
 
     def setup_ui(self):
         self.top.title("Nouveau Produit")
-        
+
+        # Center the dialog on screen
+        window_width = 400
+        window_height = 300
+        screen_width = self.top.winfo_screenwidth()
+        screen_height = self.top.winfo_screenheight()
+        x = (screen_width - window_width) // 2
+        y = (screen_height - window_height) // 2
+        self.top.geometry(f"{window_width}x{window_height}+{x}+{y}")
+
+        # Main container frame
+        main_frame = ttk.Frame(self.top, padding="20")
+        main_frame.pack(fill=tk.BOTH, expand=True)
+
         # Name
-        ttk.Label(self.top, text="Nom:").grid(row=0, column=0, padx=5, pady=5)
+        name_frame = ttk.Frame(main_frame)
+        name_frame.pack(fill=tk.X, pady=5)
+        ttk.Label(name_frame, text="Nom:").pack(side=tk.LEFT)
         self.name_var = tk.StringVar()
-        ttk.Entry(self.top, textvariable=self.name_var).grid(row=0, column=1, padx=5, pady=5)
+        ttk.Entry(name_frame, textvariable=self.name_var, width=30).pack(side=tk.LEFT, padx=(10, 0))
 
         # Price
-        ttk.Label(self.top, text="Prix:").grid(row=1, column=0, padx=5, pady=5)
+        price_frame = ttk.Frame(main_frame)
+        price_frame.pack(fill=tk.X, pady=5)
+        ttk.Label(price_frame, text="Prix:").pack(side=tk.LEFT)
         self.price_var = tk.StringVar()
-        ttk.Entry(self.top, textvariable=self.price_var).grid(row=1, column=1, padx=5, pady=5)
+        ttk.Entry(price_frame, textvariable=self.price_var, width=30).pack(side=tk.LEFT, padx=(10, 0))
 
         # Stock
-        ttk.Label(self.top, text="Stock:").grid(row=2, column=0, padx=5, pady=5)
+        stock_frame = ttk.Frame(main_frame)
+        stock_frame.pack(fill=tk.X, pady=5)
+        ttk.Label(stock_frame, text="Stock:").pack(side=tk.LEFT)
         self.stock_var = tk.StringVar()
-        ttk.Entry(self.top, textvariable=self.stock_var).grid(row=2, column=1, padx=5, pady=5)
+        ttk.Entry(stock_frame, textvariable=self.stock_var, width=30).pack(side=tk.LEFT, padx=(10, 0))
 
         # Category
-        ttk.Label(self.top, text="Catégorie:").grid(row=3, column=0, padx=5, pady=5)
+        category_frame = ttk.Frame(main_frame)
+        category_frame.pack(fill=tk.X, pady=5)
+        ttk.Label(category_frame, text="Catégorie:").pack(side=tk.LEFT)
         self.category_var = tk.StringVar()
-        self.category_combo = ttk.Combobox(self.top, textvariable=self.category_var)
+        self.category_combo = ttk.Combobox(category_frame, textvariable=self.category_var, width=27)
         self.load_categories()
-        self.category_combo.grid(row=3, column=1, padx=5, pady=5)
+        self.category_combo.pack(side=tk.LEFT, padx=(10, 0))
 
         # Buttons
-        btn_frame = ttk.Frame(self.top)
-        btn_frame.grid(row=4, column=0, columnspan=2, pady=10)
+        btn_frame = ttk.Frame(main_frame)
+        btn_frame.pack(fill=tk.X, pady=20)
         ttk.Button(btn_frame, text="Sauvegarder", command=self.save).pack(side=tk.LEFT, padx=5)
-        ttk.Button(btn_frame, text="Annuler", command=self.top.destroy).pack(side=tk.LEFT, padx=5)
+        ttk.Button(btn_frame, text="Annuler", command=self.top.destroy).pack(side=tk.LEFT)
 
     def load_categories(self):
         cursor = self.db.conn.cursor()

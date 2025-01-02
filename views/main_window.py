@@ -10,13 +10,18 @@ class MainWindow:
         self.root.geometry("1200x800")
 
         # Configure theme colors
-        self.root.configure(bg="#00796b")
+        self.root.configure(bg="#004d40")  # Darker teal color
         sv_ttk.set_theme("dark")
+        style = ttk.Style()
+        style.configure(".", background="#004d40")
+        style.configure("TFrame", background="#004d40")
+        style.configure("TLabel", background="#004d40", foreground="white")
+        style.configure("TButton", padding=5)
 
         self.setup_ui()
 
     def setup_ui(self):
-        # Create main container
+        # Create main container with centered content
         self.main_container = ttk.Frame(self.root)
         self.main_container.pack(fill=tk.BOTH, expand=True)
 
@@ -54,9 +59,9 @@ class MainWindow:
         logout_btn = ttk.Button(logout_frame, text="🚪 Déconnexion", command=self.logout, width=20)
         logout_btn.pack(pady=5, padx=5)
 
-        # Content area
+        # Content area with centered content
         self.content = ttk.Frame(self.main_container)
-        self.content.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        self.content.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=20, pady=20)
 
     def show_products(self):
         self.clear_content()
