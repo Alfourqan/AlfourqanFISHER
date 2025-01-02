@@ -103,8 +103,8 @@ class SaleDialog:
         self.top.grab_set()  # Make dialog modal
 
         # Window size and position
-        window_width = 600
-        window_height = 400
+        window_width = 800
+        window_height = 600
 
         # Get parent window position
         parent_x = self.parent.winfo_rootx()
@@ -124,49 +124,62 @@ class SaleDialog:
         main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
 
         # Customer selection
-        customer_frame = ttk.Frame(main_frame)
-        customer_frame.pack(fill=tk.X, pady=5)
-        ttk.Label(customer_frame, text="Client:").pack(side=tk.LEFT)
+        customer_frame = ttk.LabelFrame(main_frame, text="Client")
+        customer_frame.pack(fill=tk.X, pady=(0, 10))
+
         self.customer_var = tk.StringVar()
-        self.customer_combo = ttk.Combobox(customer_frame, textvariable=self.customer_var)
+        self.customer_combo = ttk.Combobox(customer_frame, textvariable=self.customer_var, width=40)
         self.load_customers()
-        self.customer_combo.pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
+        self.customer_combo.pack(padx=10, pady=10)
 
         # Products frame
-        products_frame = ttk.LabelFrame(main_frame, text="Produits")
-        products_frame.pack(fill=tk.BOTH, expand=True, pady=10)
+        products_frame = ttk.LabelFrame(main_frame, text="Ajouter un produit")
+        products_frame.pack(fill=tk.X, pady=10)
 
-        # Product selection
-        product_frame = ttk.Frame(products_frame)
-        product_frame.pack(fill=tk.X, padx=5, pady=5)
+        # Product selection - using grid for better control
+        input_frame = ttk.Frame(products_frame)
+        input_frame.pack(fill=tk.X, padx=10, pady=10)
 
-        ttk.Label(product_frame, text="Produit:").pack(side=tk.LEFT, padx=(0, 5))
+        # Product combobox
+        ttk.Label(input_frame, text="Produit:").grid(row=0, column=0, padx=5, pady=5)
         self.product_var = tk.StringVar()
-        self.product_combo = ttk.Combobox(product_frame, textvariable=self.product_var, width=30)
+        self.product_combo = ttk.Combobox(input_frame, textvariable=self.product_var, width=40)
         self.load_products()
-        self.product_combo.pack(side=tk.LEFT, padx=5)
+        self.product_combo.grid(row=0, column=1, padx=5, pady=5)
 
-        ttk.Label(product_frame, text="Quantité (kg):").pack(side=tk.LEFT, padx=5)
+        # Quantity entry
+        ttk.Label(input_frame, text="Quantité (kg):").grid(row=0, column=2, padx=5, pady=5)
         self.quantity_var = tk.StringVar()
-        quantity_entry = ttk.Entry(product_frame, textvariable=self.quantity_var, width=10)
-        quantity_entry.pack(side=tk.LEFT, padx=5)
+        quantity_entry = ttk.Entry(input_frame, textvariable=self.quantity_var, width=10)
+        quantity_entry.grid(row=0, column=3, padx=5, pady=5)
 
-        add_button = ttk.Button(product_frame, text="Ajouter", command=self.add_product)
-        add_button.pack(side=tk.LEFT, padx=5)
+        # Add button
+        add_button = ttk.Button(input_frame, text="Ajouter", command=self.add_product, style="Accent.TButton")
+        add_button.grid(row=0, column=4, padx=5, pady=5)
 
         # Products list
-        self.products_tree = ttk.Treeview(products_frame, 
+        list_frame = ttk.LabelFrame(main_frame, text="Produits sélectionnés")
+        list_frame.pack(fill=tk.BOTH, expand=True, pady=10)
+
+        self.products_tree = ttk.Treeview(list_frame, 
                                         columns=('Produit', 'Quantité', 'Prix', 'Total'),
                                         show='headings')
         self.products_tree.heading('Produit', text='Produit')
         self.products_tree.heading('Quantité', text='Quantité')
         self.products_tree.heading('Prix', text='Prix')
         self.products_tree.heading('Total', text='Total')
-        self.products_tree.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+
+        # Configure column widths
+        self.products_tree.column('Produit', width=300)
+        self.products_tree.column('Quantité', width=100)
+        self.products_tree.column('Prix', width=100)
+        self.products_tree.column('Total', width=100)
+
+        self.products_tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
         # Total
         total_frame = ttk.Frame(main_frame)
-        total_frame.pack(fill=tk.X, pady=5)
+        total_frame.pack(fill=tk.X, pady=10)
         ttk.Label(total_frame, text="Total:", font=('Helvetica', 12, 'bold')).pack(side=tk.LEFT)
         self.total_var = tk.StringVar(value="0.00 €")
         ttk.Label(total_frame, textvariable=self.total_var, font=('Helvetica', 12, 'bold')).pack(side=tk.LEFT, padx=5)
@@ -174,7 +187,7 @@ class SaleDialog:
         # Buttons
         btn_frame = ttk.Frame(main_frame)
         btn_frame.pack(fill=tk.X, pady=10)
-        ttk.Button(btn_frame, text="Sauvegarder", command=self.save).pack(side=tk.RIGHT, padx=5)
+        ttk.Button(btn_frame, text="Sauvegarder", command=self.save, style="Accent.TButton").pack(side=tk.RIGHT, padx=5)
         ttk.Button(btn_frame, text="Annuler", command=self.top.destroy).pack(side=tk.RIGHT)
 
     def load_customers(self):
