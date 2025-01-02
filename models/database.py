@@ -36,17 +36,20 @@ class Database:
         # Users table
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
             password_hash TEXT NOT NULL
         )
         ''')
 
-        # Insert default admin user
+        # Insert default admin user if not exists
         cursor.execute('''
         INSERT OR IGNORE INTO users (username, password_hash)
         VALUES (?, ?)
         ''', ('admin', generate_password_hash('admin123')))
+
+        # Commit the changes
+        self.conn.commit()
 
         # Produits
         cursor.execute('''
