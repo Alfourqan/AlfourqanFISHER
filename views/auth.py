@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
 from models.database import Database
-import ttkthemes as ttk
 
 class LoginWindow:
     def __init__(self, callback=None):
@@ -34,7 +33,7 @@ class LoginWindow:
         main_frame.pack(expand=True, fill='both', padx=40, pady=40)
 
         # Title
-        ttk.Label(
+        tk.Label(
             main_frame,
             text="🐟 AL FOURQANE",
             font=('Helvetica', 24, 'bold'),
@@ -43,7 +42,7 @@ class LoginWindow:
         ).pack(pady=(0, 20))
 
         # Subtitle
-        ttk.Label(
+        tk.Label(
             main_frame,
             text="Connexion",
             font=('Helvetica', 18),
@@ -52,7 +51,7 @@ class LoginWindow:
         ).pack(pady=(0, 40))
 
         # Username
-        ttk.Label(
+        tk.Label(
             main_frame,
             text="Utilisateur:",
             font=('Helvetica', 12),
@@ -61,16 +60,17 @@ class LoginWindow:
         ).pack(anchor='w')
 
         self.username_var = tk.StringVar()
-        ttk.Entry(
+        tk.Entry(
             main_frame,
             textvariable=self.username_var,
             font=('Helvetica', 12),
             bg="#16213e",
-            fg="white"
+            fg="white",
+            insertbackground="white"
         ).pack(fill='x', pady=(5, 20))
 
         # Password
-        ttk.Label(
+        tk.Label(
             main_frame,
             text="Mot de passe:",
             font=('Helvetica', 12),
@@ -79,13 +79,14 @@ class LoginWindow:
         ).pack(anchor='w')
 
         self.password_var = tk.StringVar()
-        ttk.Entry(
+        tk.Entry(
             main_frame,
             textvariable=self.password_var,
             show="*",
             font=('Helvetica', 12),
             bg="#16213e",
-            fg="white"
+            fg="white",
+            insertbackground="white"
         ).pack(fill='x', pady=(5, 40))
 
         # Buttons frame
