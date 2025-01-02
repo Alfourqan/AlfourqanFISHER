@@ -90,36 +90,28 @@ class LoginWindow:
         ).pack(fill='x', pady=(5, 40))
 
         # Buttons frame
-        button_frame = tk.Frame(main_frame, bg="#1a1a2e")
-        button_frame.pack(fill='x', pady=(0, 20))
+        btn_frame = tk.Frame(main_frame, bg="#1a1a2e")
+        btn_frame.pack(fill='x', pady=(0, 20))
 
-        # Login button with hover effect
-        login_button = tk.Button(
-            button_frame,
+        # Login button
+        tk.Button(
+            btn_frame,
             text="Se connecter",
             command=self.login,
             font=('Helvetica', 12, 'bold'),
             bg="#00a8e8",
-            fg="white",
-            activebackground="#0077b6",
-            activeforeground="white",
-            cursor="hand2"
-        )
-        login_button.pack(side=tk.LEFT, expand=True, padx=5, pady=5, fill='x')
+            fg="white"
+        ).pack(side=tk.LEFT, expand=True, padx=5)
 
-        # Cancel button with hover effect
-        cancel_button = tk.Button(
-            button_frame,
+        # Cancel button
+        tk.Button(
+            btn_frame,
             text="Annuler",
             command=self.window.destroy,
             font=('Helvetica', 12),
             bg="#dc3545",
-            fg="white",
-            activebackground="#c82333",
-            activeforeground="white",
-            cursor="hand2"
-        )
-        cancel_button.pack(side=tk.LEFT, expand=True, padx=5, pady=5, fill='x')
+            fg="white"
+        ).pack(side=tk.LEFT, expand=True, padx=5)
 
         # Bind enter key to login
         self.window.bind('<Return>', lambda e: self.login())
