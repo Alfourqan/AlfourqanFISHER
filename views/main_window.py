@@ -6,7 +6,7 @@ from views import products, sales, customers, invoices, suppliers, categories, i
 class MainWindow:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("AL FOURQANE - Gestion de Poissonnerie")
+        self.root.title("AL FOURQANE")
         self.root.geometry("1200x800")
         self.current_user = None
 
@@ -23,7 +23,8 @@ class MainWindow:
         style.configure("Sidebar.TFrame", background="#16213e")
         style.configure("Menu.TButton", 
                        background="#16213e",
-                       padding=(10, 5, 10, 5),
+                       foreground="white",
+                       padding=(20, 10, 20, 10),
                        width=20,
                        anchor="w")  # Left alignment
 
@@ -31,7 +32,7 @@ class MainWindow:
         self.show_login()
 
     def setup_ui(self):
-        # Create main container
+        # Main container
         self.main_container = ttk.Frame(self.root, style="TFrame")
         self.main_container.pack(fill=tk.BOTH, expand=True)
 
@@ -46,11 +47,16 @@ class MainWindow:
                  text="AL FOURQANE",
                  font=('Helvetica', 16, 'bold'),
                  foreground="white",
-                 background="#16213e").pack(anchor=tk.CENTER)
+                 background="#16213e").pack(anchor=tk.W, padx=20)
 
         # Menu buttons frame
         menu_frame = ttk.Frame(self.sidebar, style="Sidebar.TFrame")
-        menu_frame.pack(fill=tk.X, expand=False, pady=5)
+        menu_frame.pack(fill=tk.X, expand=False)
+
+        # Top menu frame (dots)
+        top_menu = ttk.Frame(self.main_container, style="TFrame")
+        top_menu.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
+        ttk.Label(top_menu, text="○ ○ ○", font=('Helvetica', 12), foreground="white").pack(side=tk.RIGHT, padx=10)
 
         # Menu buttons with icons
         self.menu_items = [
@@ -63,7 +69,7 @@ class MainWindow:
             ("Catégories", "📁", self.show_categories),
             ("Inventaire", "📦", self.show_inventory),
             ("Caisse", "💵", self.show_cashier),
-            ("Rapport", "📊", self.show_reports),
+            ("Report", "📊", self.show_reports),
             ("Réglages", "⚙️", self.show_settings),
         ]
 
@@ -73,7 +79,7 @@ class MainWindow:
                            text=f"{icon}  {text}", 
                            command=command,
                            style="Menu.TButton")
-            btn.pack(pady=2, padx=5, fill=tk.X)
+            btn.pack(pady=1, fill=tk.X)
             self.menu_buttons.append(btn)
             btn.configure(state="disabled")
 
@@ -85,7 +91,7 @@ class MainWindow:
                                    text="🚪  Déconnexion",
                                    command=self.logout,
                                    style="Menu.TButton")
-        self.logout_btn.pack(pady=5, padx=5, fill=tk.X)
+        self.logout_btn.pack(fill=tk.X)
         self.logout_btn.configure(state="disabled")
 
         # Content area

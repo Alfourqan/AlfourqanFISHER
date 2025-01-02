@@ -14,7 +14,10 @@ class LoginWindow:
         style = ttk.Style()
         style.configure("Login.TFrame", background="#1a1a2e")
         style.configure("Login.TLabel", background="#1a1a2e", foreground="white")
-        style.configure("Login.TButton", padding=10)
+        style.configure("Login.TButton", 
+                       background="#16213e",
+                       foreground="white",
+                       padding=(10, 5, 10, 5))
 
         self.setup_ui()
 
