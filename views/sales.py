@@ -3,7 +3,9 @@ from tkinter import ttk, messagebox
 from models.database import Database
 from datetime import datetime
 
+
 class SalesView:
+
     def __init__(self, parent):
         self.parent = parent
         self.db = Database()
@@ -14,8 +16,11 @@ class SalesView:
         # Title frame
         title_frame = ttk.Frame(self.parent)
         title_frame.pack(fill=tk.X, padx=5, pady=5)
-        ttk.Label(title_frame, text="Gestion des Ventes", font=('Helvetica', 16, 'bold')).pack(side=tk.LEFT)
-        ttk.Button(title_frame, text="+ Nouvelle Vente", command=self.new_sale).pack(side=tk.RIGHT)
+        ttk.Label(title_frame,
+                  text="Gestion des Ventes",
+                  font=('Helvetica', 16, 'bold')).pack(side=tk.LEFT)
+        ttk.Button(title_frame, text="+ Nouvelle Vente",
+                   command=self.new_sale).pack(side=tk.RIGHT)
 
         # Search frame
         search_frame = ttk.Frame(self.parent)
@@ -23,22 +28,25 @@ class SalesView:
         ttk.Label(search_frame, text="Rechercher:").pack(side=tk.LEFT)
         self.search_var = tk.StringVar()
         self.search_var.trace('w', self.filter_sales)
-        ttk.Entry(search_frame, textvariable=self.search_var).pack(side=tk.LEFT, padx=5)
+        ttk.Entry(search_frame,
+                  textvariable=self.search_var).pack(side=tk.LEFT, padx=5)
 
         # Sales table
-        self.tree = ttk.Treeview(self.parent, columns=('ID', 'Date', 'Client', 'Total'), show='headings')
+        self.tree = ttk.Treeview(self.parent,
+                                 columns=('ID', 'Date', 'Client', 'Total'),
+                                 show='headings')
         self.tree.heading('ID', text='ID')
         self.tree.heading('Date', text='Date')
         self.tree.heading('Client', text='Client')
         self.tree.heading('Total', text='Total')
-        
+
         self.tree.column('ID', width=50)
         self.tree.column('Date', width=150)
         self.tree.column('Client', width=200)
         self.tree.column('Total', width=100)
-        
+
         self.tree.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
-        
+
         # Bind double click
         self.tree.bind('<Double-1>', self.view_sale_details)
 
@@ -50,27 +58,28 @@ class SalesView:
             LEFT JOIN customers c ON s.customer_id = c.id
             ORDER BY s.date DESC
         ''')
-        
+
         for item in self.tree.get_children():
             self.tree.delete(item)
-            
+
         for row in cursor.fetchall():
             self.tree.insert('', 'end', values=row)
 
     def filter_sales(self, *args):
         search_term = self.search_var.get().lower()
         cursor = self.db.conn.cursor()
-        cursor.execute('''
+        cursor.execute(
+            '''
             SELECT s.id, s.date, c.name, s.total 
             FROM sales s 
             LEFT JOIN customers c ON s.customer_id = c.id
             WHERE LOWER(c.name) LIKE ?
             ORDER BY s.date DESC
-        ''', (f'%{search_term}%',))
-        
+        ''', (f'%{search_term}%', ))
+
         for item in self.tree.get_children():
             self.tree.delete(item)
-            
+
         for row in cursor.fetchall():
             self.tree.insert('', 'end', values=row)
 
@@ -85,7 +94,9 @@ class SalesView:
         dialog = SaleDetailsDialog(self.parent, self.db, sale_id)
         self.parent.wait_window(dialog.top)
 
+
 class SaleDialog:
+
     def __init__(self, parent, db):
         self.top = tk.Toplevel(parent)
         self.db = db
@@ -93,40 +104,67 @@ class SaleDialog:
 
     def setup_ui(self):
         self.top.title("Nouvelle Vente")
-        self.top.geometry("600x400")
+
+        # Définir la taille de la fenêtre et la centrer par rapport au parent
+        window_width = 600
+        window_height = 400
+        self.top.geometry(f"{window_width}x{window_height}")
+
+        # Centrer la fenêtre par rapport à la fenêtre principale
+        parent_x = self.parent.winfo_x()
+        parent_y = self.parent.winfo_y()
+        parent_width = self.parent.winfo_width()
+        parent_height = self.parent.winfo_height()
+
+        center_x = parent_x + (parent_width // 2) - (window_width // 2)
+        center_y = parent_y + (parent_height // 2) - (window_height // 2)
+        self.top.geometry(
+            f"{window_width}x{window_height}+{center_x}+{center_y}")
+
+        # Changer la couleur de fond de la fenêtre
+        self.top.configure(
+            bg="#f0f0f0")  # Remplacez "#f0f0f0" par la couleur de votre choix
 
         # Customer selection
         customer_frame = ttk.Frame(self.top)
         customer_frame.pack(fill=tk.X, padx=5, pady=5)
         ttk.Label(customer_frame, text="Client:").pack(side=tk.LEFT)
         self.customer_var = tk.StringVar()
-        self.customer_combo = ttk.Combobox(customer_frame, textvariable=self.customer_var)
+        self.customer_combo = ttk.Combobox(customer_frame,
+                                           textvariable=self.customer_var)
         self.load_customers()
         self.customer_combo.pack(side=tk.LEFT, padx=5)
 
         # Products
         products_frame = ttk.Frame(self.top)
         products_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
-        
+
         # Product selection
         product_select_frame = ttk.Frame(products_frame)
         product_select_frame.pack(fill=tk.X)
         ttk.Label(product_select_frame, text="Produit:").pack(side=tk.LEFT)
         self.product_var = tk.StringVar()
-        self.product_combo = ttk.Combobox(product_select_frame, textvariable=self.product_var)
+        self.product_combo = ttk.Combobox(product_select_frame,
+                                          textvariable=self.product_var)
         self.load_products()
         self.product_combo.pack(side=tk.LEFT, padx=5)
-        
-        ttk.Label(product_select_frame, text="Quantité (kg):").pack(side=tk.LEFT)
+
+        ttk.Label(product_select_frame,
+                  text="Quantité (kg):").pack(side=tk.LEFT)
         self.quantity_var = tk.StringVar()
-        ttk.Entry(product_select_frame, textvariable=self.quantity_var, width=10).pack(side=tk.LEFT, padx=5)
-        
-        ttk.Button(product_select_frame, text="Ajouter", command=self.add_product).pack(side=tk.LEFT, padx=5)
+        ttk.Entry(product_select_frame,
+                  textvariable=self.quantity_var,
+                  width=10).pack(side=tk.LEFT, padx=5)
+
+        ttk.Button(product_select_frame,
+                   text="Ajouter",
+                   command=self.add_product).pack(side=tk.LEFT, padx=5)
 
         # Products list
-        self.products_tree = ttk.Treeview(products_frame, 
-                                        columns=('Produit', 'Quantité', 'Prix', 'Total'),
-                                        show='headings')
+        self.products_tree = ttk.Treeview(products_frame,
+                                          columns=('Produit', 'Quantité',
+                                                   'Prix', 'Total'),
+                                          show='headings')
         self.products_tree.heading('Produit', text='Produit')
         self.products_tree.heading('Quantité', text='Quantité')
         self.products_tree.heading('Prix', text='Prix')
@@ -143,8 +181,10 @@ class SaleDialog:
         # Buttons
         btn_frame = ttk.Frame(self.top)
         btn_frame.pack(fill=tk.X, padx=5, pady=5)
-        ttk.Button(btn_frame, text="Sauvegarder", command=self.save).pack(side=tk.RIGHT, padx=5)
-        ttk.Button(btn_frame, text="Annuler", command=self.top.destroy).pack(side=tk.RIGHT, padx=5)
+        ttk.Button(btn_frame, text="Sauvegarder",
+                   command=self.save).pack(side=tk.RIGHT, padx=5)
+        ttk.Button(btn_frame, text="Annuler",
+                   command=self.top.destroy).pack(side=tk.RIGHT, padx=5)
 
     def load_customers(self):
         cursor = self.db.conn.cursor()
@@ -160,76 +200,109 @@ class SaleDialog:
 
     def add_product(self):
         try:
+            # Nouveau code : Vérification de la validité de la quantité
             product = self.product_var.get()
             quantity = float(self.quantity_var.get())
-            
+            if quantity <= 0:
+                raise ValueError("La quantité doit être positive")
+
             cursor = self.db.conn.cursor()
-            cursor.execute('SELECT price FROM products WHERE name = ?', (product,))
+            cursor.execute('SELECT price FROM products WHERE name = ?',
+                           (product, ))
             price = cursor.fetchone()[0]
-            
+
             total = price * quantity
-            
-            self.products_tree.insert('', 'end', values=(product, quantity, price, total))
-            
+
+            self.products_tree.insert('',
+                                      'end',
+                                      values=(product, quantity, price, total))
+
             # Update total
-            current_total = float(self.total_var.get().replace('€', '').strip())
+            current_total = float(self.total_var.get().replace('€',
+                                                               '').strip())
             self.total_var.set(f"{current_total + total:.2f} €")
-            
+
             # Clear inputs
             self.product_var.set('')
             self.quantity_var.set('')
-            
+
         except ValueError:
-            messagebox.showerror("Erreur", "Veuillez entrer une quantité valide")
+            messagebox.showerror("Erreur",
+                                 "Veuillez entrer une quantité valide")
 
     def save(self):
         try:
+            # Nouveau code : Ajouter une vérification pour le client sélectionné
             customer = self.customer_var.get()
+            if not customer:
+                raise ValueError("Sélectionnez un client.")
+
+            # Nouveau code : Vérifier s'il y a des produits dans la vente
+            if not self.products_tree.get_children():
+                raise ValueError("Ajoutez des produits à la vente.")
+
             cursor = self.db.conn.cursor()
-            
+
             # Get customer id
-            cursor.execute('SELECT id FROM customers WHERE name = ?', (customer,))
+            cursor.execute('SELECT id FROM customers WHERE name = ?',
+                           (customer, ))
             customer_id = cursor.fetchone()[0]
-            
+
             # Create sale
             total = float(self.total_var.get().replace('€', '').strip())
-            cursor.execute('''
+            cursor.execute(
+                '''
                 INSERT INTO sales (date, customer_id, total)
                 VALUES (?, ?, ?)
-            ''', (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), customer_id, total))
-            
+            ''', (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), customer_id,
+                  total))
+
             sale_id = cursor.lastrowid
-            
+
             # Add sale items
             for item in self.products_tree.get_children():
                 values = self.products_tree.item(item)['values']
                 product_name = values[0]
                 quantity = values[1]
                 price = values[2]
-                
-                cursor.execute('SELECT id FROM products WHERE name = ?', (product_name,))
+
+                cursor.execute('SELECT id FROM products WHERE name = ?',
+                               (product_name, ))
                 product_id = cursor.fetchone()[0]
-                
-                cursor.execute('''
+
+                cursor.execute(
+                    '''
                     INSERT INTO sale_items (sale_id, product_id, quantity, price)
                     VALUES (?, ?, ?, ?)
                 ''', (sale_id, product_id, quantity, price))
-                
+
                 # Update stock
-                cursor.execute('''
+                cursor.execute(
+                    '''
                     UPDATE products 
                     SET stock = stock - ? 
                     WHERE id = ?
                 ''', (quantity, product_id))
-            
+
             self.db.conn.commit()
+
+            # Réinitialisation des champs après la vente
+            self.product_var.set('')
+            self.quantity_var.set('')
+
+            messagebox.showinfo("Succès",
+                                "La vente a été enregistrée avec succès")
             self.top.destroy()
-            
-        except Exception as e:
+
+        # Nouveau code : Gestion d'erreurs pour les entrées utilisateur
+        except ValueError as e:
             messagebox.showerror("Erreur", str(e))
-            self.db.conn.rollback()
+        except Exception as e:
+            messagebox.showerror("Erreur", f"Une erreur est survenue: {e}")
+
 
 class SaleDetailsDialog:
+
     def __init__(self, parent, db, sale_id):
         self.top = tk.Toplevel(parent)
         self.db = db
@@ -242,12 +315,13 @@ class SaleDetailsDialog:
 
         # Load sale details
         cursor = self.db.conn.cursor()
-        cursor.execute('''
+        cursor.execute(
+            '''
             SELECT s.date, c.name, s.total 
             FROM sales s 
             LEFT JOIN customers c ON s.customer_id = c.id
             WHERE s.id = ?
-        ''', (self.sale_id,))
+        ''', (self.sale_id, ))
         sale = cursor.fetchone()
 
         # Display sale info
@@ -258,9 +332,10 @@ class SaleDetailsDialog:
         ttk.Label(info_frame, text=f"Total: {sale[2]} €").pack()
 
         # Display items
-        self.tree = ttk.Treeview(self.top, 
-                                columns=('Produit', 'Quantité', 'Prix', 'Total'),
-                                show='headings')
+        self.tree = ttk.Treeview(self.top,
+                                 columns=('Produit', 'Quantité', 'Prix',
+                                          'Total'),
+                                 show='headings')
         self.tree.heading('Produit', text='Produit')
         self.tree.heading('Quantité', text='Quantité')
         self.tree.heading('Prix', text='Prix')
@@ -268,14 +343,16 @@ class SaleDetailsDialog:
         self.tree.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
         # Load items
-        cursor.execute('''
+        cursor.execute(
+            '''
             SELECT p.name, si.quantity, si.price, (si.quantity * si.price) as total
             FROM sale_items si
             JOIN products p ON si.product_id = p.id
             WHERE si.sale_id = ?
-        ''', (self.sale_id,))
+        ''', (self.sale_id, ))
 
         for row in cursor.fetchall():
             self.tree.insert('', 'end', values=row)
 
-        ttk.Button(self.top, text="Fermer", command=self.top.destroy).pack(pady=5)
+        ttk.Button(self.top, text="Fermer",
+                   command=self.top.destroy).pack(pady=5)
