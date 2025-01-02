@@ -59,9 +59,14 @@ class LoginWindow:
                  font=('Helvetica', 14),  # Added font size
                  style="Login.TLabel").pack(anchor=tk.W)
         self.username_var = tk.StringVar()
-        ttk.Entry(username_frame, 
-                 textvariable=self.username_var,
-                 width=50).pack(fill=tk.X, pady=(5, 0))  # Increased width
+        self.username_entry = tk.Entry(username_frame, 
+                                     textvariable=self.username_var,
+                                     width=50,
+                                     font=('Helvetica', 12),
+                                     bg="#16213e",
+                                     fg="white",
+                                     insertbackground="white")
+        self.username_entry.pack(fill=tk.X, pady=(5, 0))
 
         # Password
         password_frame = ttk.Frame(main_frame, style="Login.TFrame")
@@ -71,10 +76,15 @@ class LoginWindow:
                  font=('Helvetica', 14),  # Added font size
                  style="Login.TLabel").pack(anchor=tk.W)
         self.password_var = tk.StringVar()
-        ttk.Entry(password_frame,
-                 textvariable=self.password_var,
-                 show="*",
-                 width=50).pack(fill=tk.X, pady=(5, 0))  # Increased width
+        self.password_entry = tk.Entry(password_frame,
+                                     textvariable=self.password_var,
+                                     show="*",
+                                     width=50,
+                                     font=('Helvetica', 12),
+                                     bg="#16213e",
+                                     fg="white",
+                                     insertbackground="white")
+        self.password_entry.pack(fill=tk.X, pady=(5, 0))
 
         # Buttons
         btn_frame = ttk.Frame(main_frame, style="Login.TFrame")
@@ -90,6 +100,12 @@ class LoginWindow:
                   command=self.window.destroy,
                   style="Login.TButton",
                   width=20).pack(side=tk.LEFT)  # Increased width
+
+        # Bind enter key to login
+        self.window.bind('<Return>', lambda e: self.login())
+
+        # Initial focus
+        self.username_entry.focus_set()
 
     def login(self):
         username = self.username_var.get()
