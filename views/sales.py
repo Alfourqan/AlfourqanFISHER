@@ -153,13 +153,14 @@ class SaleDialog:
         quantity_entry = ttk.Entry(input_frame, textvariable=self.quantity_var, width=10)
         quantity_entry.grid(row=0, column=3, padx=5, pady=5)
 
-        # Add button - only defined once
-        ttk.Button(input_frame, text="Ajouter", command=self.add_product, style="Accent.TButton").grid(row=0, column=4, padx=5, pady=5)
+        # Add button
+        ttk.Button(input_frame, text="Ajouter", command=self.add_product).grid(row=0, column=4, padx=5, pady=5)
 
-        # Products list
+        # Products list frame
         list_frame = ttk.LabelFrame(main_frame, text="Produits sélectionnés")
         list_frame.pack(fill=tk.BOTH, expand=True, pady=10)
 
+        # Products list
         self.products_tree = ttk.Treeview(list_frame, 
                                         columns=('Produit', 'Quantité', 'Prix', 'Total'),
                                         show='headings')
@@ -176,17 +177,17 @@ class SaleDialog:
 
         self.products_tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-        # Total
+        # Total frame
         total_frame = ttk.Frame(main_frame)
         total_frame.pack(fill=tk.X, pady=10)
         ttk.Label(total_frame, text="Total:", font=('Helvetica', 12, 'bold')).pack(side=tk.LEFT)
         self.total_var = tk.StringVar(value="0.00 €")
         ttk.Label(total_frame, textvariable=self.total_var, font=('Helvetica', 12, 'bold')).pack(side=tk.LEFT, padx=5)
 
-        # Buttons
+        # Buttons frame
         btn_frame = ttk.Frame(main_frame)
         btn_frame.pack(fill=tk.X, pady=10)
-        ttk.Button(btn_frame, text="Sauvegarder", command=self.save, style="Accent.TButton").pack(side=tk.RIGHT, padx=5)
+        ttk.Button(btn_frame, text="Sauvegarder", command=self.save).pack(side=tk.RIGHT, padx=5)
         ttk.Button(btn_frame, text="Annuler", command=self.top.destroy).pack(side=tk.RIGHT)
 
     def load_customers(self):
