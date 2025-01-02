@@ -11,13 +11,13 @@ class LoginWindow:
 
         # Configure window
         self.window.configure(bg="#1a1a2e")
-        self.window.geometry("600x400")
+        self.window.geometry("400x500")
 
         # Center window
         screen_width = self.window.winfo_screenwidth()
         screen_height = self.window.winfo_screenheight()
-        x = (screen_width - 600) // 2
-        y = (screen_height - 400) // 2
+        x = (screen_width - 400) // 2
+        y = (screen_height - 500) // 2
         self.window.geometry(f"+{x}+{y}")
 
         # Make it modal
@@ -29,92 +29,117 @@ class LoginWindow:
 
     def setup_ui(self):
         # Main container
-        main_frame = tk.Frame(self.window, bg="#1a1a2e", padx=60, pady=40)
-        main_frame.pack(fill=tk.BOTH, expand=True)
+        main_frame = tk.Frame(self.window, bg="#1a1a2e")
+        main_frame.pack(expand=True, fill='both', padx=40, pady=40)
 
         # Title
-        tk.Label(main_frame, 
-                text="AL FOURQANE",
-                font=('Helvetica', 32, 'bold'),
-                bg="#1a1a2e",
-                fg="white").pack(pady=(0, 10))
+        title_label = tk.Label(
+            main_frame,
+            text="AL FOURQANE",
+            font=('Helvetica', 24, 'bold'),
+            bg="#1a1a2e",
+            fg="white"
+        )
+        title_label.pack(pady=(0, 20))
 
-        tk.Label(main_frame,
-                text="Connexion",
-                font=('Helvetica', 24),
-                bg="#1a1a2e",
-                fg="white").pack(pady=(0, 40))
+        # Subtitle
+        subtitle_label = tk.Label(
+            main_frame,
+            text="Connexion",
+            font=('Helvetica', 18),
+            bg="#1a1a2e",
+            fg="white"
+        )
+        subtitle_label.pack(pady=(0, 40))
 
         # Username
-        tk.Label(main_frame,
-                text="Utilisateur:",
-                font=('Helvetica', 14),
-                bg="#1a1a2e",
-                fg="white").pack(anchor=tk.W)
+        username_label = tk.Label(
+            main_frame,
+            text="Utilisateur:",
+            font=('Helvetica', 12),
+            bg="#1a1a2e",
+            fg="white"
+        )
+        username_label.pack(anchor='w')
 
         self.username_var = tk.StringVar()
-        self.username_entry = tk.Entry(main_frame,
-                                     textvariable=self.username_var,
-                                     font=('Helvetica', 12),
-                                     bg="#16213e",
-                                     fg="white",
-                                     insertbackground="white",
-                                     relief=tk.SOLID,
-                                     bd=1)
-        self.username_entry.pack(fill=tk.X, pady=(5, 20))
+        username_entry = tk.Entry(
+            main_frame,
+            textvariable=self.username_var,
+            font=('Helvetica', 12),
+            bg="#16213e",
+            fg="white",
+            insertbackground="white"
+        )
+        username_entry.pack(fill='x', pady=(5, 20))
 
         # Password
-        tk.Label(main_frame,
-                text="Mot de passe:",
-                font=('Helvetica', 14),
-                bg="#1a1a2e",
-                fg="white").pack(anchor=tk.W)
+        password_label = tk.Label(
+            main_frame,
+            text="Mot de passe:",
+            font=('Helvetica', 12),
+            bg="#1a1a2e",
+            fg="white"
+        )
+        password_label.pack(anchor='w')
 
         self.password_var = tk.StringVar()
-        self.password_entry = tk.Entry(main_frame,
-                                     textvariable=self.password_var,
-                                     show="*",
-                                     font=('Helvetica', 12),
-                                     bg="#16213e",
-                                     fg="white",
-                                     insertbackground="white",
-                                     relief=tk.SOLID,
-                                     bd=1)
-        self.password_entry.pack(fill=tk.X, pady=(5, 40))
+        password_entry = tk.Entry(
+            main_frame,
+            textvariable=self.password_var,
+            show="*",
+            font=('Helvetica', 12),
+            bg="#16213e",
+            fg="white",
+            insertbackground="white"
+        )
+        password_entry.pack(fill='x', pady=(5, 40))
 
         # Buttons frame
-        btn_frame = tk.Frame(main_frame, bg="#1a1a2e")
-        btn_frame.pack(fill=tk.X)
+        button_frame = tk.Frame(main_frame, bg="#1a1a2e")
+        button_frame.pack(fill='x', pady=(0, 20))
 
-        login_btn = tk.Button(btn_frame,
-                            text="Connexion",
-                            command=self.login,
-                            font=('Helvetica', 12),
-                            bg="#16213e",
-                            fg="white",
-                            relief=tk.SOLID,
-                            bd=1,
-                            padx=20,
-                            pady=10)
-        login_btn.pack(side=tk.LEFT, padx=(0, 10))
+        # Login button
+        login_button = tk.Button(
+            button_frame,
+            text="Se connecter",
+            command=self.login,
+            font=('Helvetica', 12, 'bold'),
+            bg="#00a8e8",
+            fg="white",
+            activebackground="#0077b6",
+            activeforeground="white",
+            relief=tk.RAISED,
+            bd=0,
+            padx=20,
+            pady=10,
+            cursor="hand2"
+        )
+        login_button.pack(side=tk.LEFT, padx=(0, 10), expand=True)
 
-        cancel_btn = tk.Button(btn_frame,
-                             text="Annuler",
-                             command=self.window.destroy,
-                             font=('Helvetica', 12),
-                             bg="#16213e",
-                             fg="white",
-                             relief=tk.SOLID,
-                             bd=1,
-                             padx=20,
-                             pady=10)
-        cancel_btn.pack(side=tk.LEFT)
+        # Cancel button
+        cancel_button = tk.Button(
+            button_frame,
+            text="Annuler",
+            command=self.window.destroy,
+            font=('Helvetica', 12),
+            bg="#dc3545",
+            fg="white",
+            activebackground="#c82333",
+            activeforeground="white",
+            relief=tk.RAISED,
+            bd=0,
+            padx=20,
+            pady=10,
+            cursor="hand2"
+        )
+        cancel_button.pack(side=tk.LEFT, expand=True)
 
         # Bind enter key to login
         self.window.bind('<Return>', lambda e: self.login())
 
         # Initial focus
-        self.username_entry.focus_set()
+        username_entry.focus_set()
 
     def login(self):
         username = self.username_var.get()
