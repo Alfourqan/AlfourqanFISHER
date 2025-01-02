@@ -92,7 +92,7 @@ class SalesView:
 
 class SaleDialog:
     def __init__(self, parent, db):
-        self.parent = parent  # Store the parent window
+        self.parent = parent
         self.db = db
         self.top = tk.Toplevel(parent)
         self.setup_ui()
@@ -105,23 +105,15 @@ class SaleDialog:
         # Window size and position
         window_width = 800
         window_height = 600
-
-        # Get parent window position
-        parent_x = self.parent.winfo_rootx()
-        parent_y = self.parent.winfo_rooty()
-        parent_width = self.parent.winfo_width()
-        parent_height = self.parent.winfo_height()
-
-        # Calculate position
-        x = parent_x + (parent_width - window_width) // 2
-        y = parent_y + (parent_height - window_height) // 2
-
-        # Set geometry
+        screen_width = self.top.winfo_screenwidth()
+        screen_height = self.top.winfo_screenheight()
+        x = (screen_width - window_width) // 2
+        y = (screen_height - window_height) // 2
         self.top.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
         # Main container
-        main_frame = ttk.Frame(self.top)
-        main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+        main_frame = ttk.Frame(self.top, padding="20")
+        main_frame.pack(fill=tk.BOTH, expand=True)
 
         # Customer selection
         customer_frame = ttk.LabelFrame(main_frame, text="Client")
