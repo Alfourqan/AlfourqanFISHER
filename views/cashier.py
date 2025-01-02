@@ -234,13 +234,13 @@ class CashierView:
 class QuantityDialog:
     def __init__(self, parent, max_quantity):
         self.top = tk.Toplevel(parent)
-        self.max_quantity = max_quantity
+        self.max_quantity = float(max_quantity)  # Convert to float when initializing
         self.quantity = None
         self.setup_ui()
 
     def setup_ui(self):
         self.top.title("Quantité")
-        
+
         ttk.Label(self.top, text="Quantité (kg):").grid(row=0, column=0, padx=5, pady=5)
         self.quantity_var = tk.StringVar()
         ttk.Entry(self.top, textvariable=self.quantity_var).grid(row=0, column=1, padx=5, pady=5)
@@ -254,9 +254,9 @@ class QuantityDialog:
                 raise ValueError("La quantité doit être positive")
             if quantity > self.max_quantity:
                 raise ValueError(f"Stock disponible: {self.max_quantity} kg")
-            
+
             self.quantity = quantity
             self.top.destroy()
-            
+
         except ValueError as e:
             messagebox.showerror("Erreur", str(e))
