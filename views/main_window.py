@@ -7,51 +7,53 @@ class SplashScreen:
     def __init__(self, parent):
         self.parent = parent
         self.splash = tk.Toplevel(parent)
-        self.splash.title("")
+        self.splash.title("AL FOURQANE")
 
-        # Make it fullscreen
-        width = self.splash.winfo_screenwidth()
-        height = self.splash.winfo_screenheight()
-        self.splash.geometry(f"{width}x{height}")
+        # Configure window size (fixed size instead of fullscreen)
+        width = 600
+        height = 400
+        screen_width = self.splash.winfo_screenwidth()
+        screen_height = self.splash.winfo_screenheight()
+        x = (screen_width - width) // 2
+        y = (screen_height - height) // 2
+        self.splash.geometry(f"{width}x{height}+{x}+{y}")
 
         # Configure theme colors
         self.splash.configure(bg="#1a1a2e")
+
+        # Make it modal and remove decorations
+        self.splash.transient(parent)
+        self.splash.grab_set()
+        self.splash.overrideredirect(True)
 
         # Center the content
         content_frame = tk.Frame(self.splash, bg="#1a1a2e")
         content_frame.place(relx=0.5, rely=0.5, anchor="center")
 
         # Logo and title
-        title_label = tk.Label(
+        tk.Label(
             content_frame,
             text="🐟",
-            font=('Helvetica', 120),
+            font=('Helvetica', 100),
             bg="#1a1a2e",
             fg="white"
-        )
-        title_label.pack()
+        ).pack()
 
-        name_label = tk.Label(
+        tk.Label(
             content_frame,
             text="AL FOURQANE",
-            font=('Helvetica', 48, 'bold'),
+            font=('Helvetica', 36, 'bold'),
             bg="#1a1a2e",
             fg="white"
-        )
-        name_label.pack(pady=20)
+        ).pack(pady=20)
 
         # Progress bar
         self.progress = ttk.Progressbar(
             content_frame,
-            length=400,
+            length=300,
             mode='determinate'
         )
         self.progress.pack(pady=30)
-
-        # Remove window decorations
-        self.splash.overrideredirect(True)
-        self.splash.lift()
-        self.splash.grab_set()
 
         # Start animation
         self.progress['maximum'] = 100
@@ -60,8 +62,8 @@ class SplashScreen:
 
     def animate(self):
         if self.progress['value'] < 100:
-            self.progress['value'] += 2
-            self.splash.after(20, self.animate)
+            self.progress['value'] += 5
+            self.splash.after(50, self.animate)
         else:
             self.splash.after(500, self.finish)
 
@@ -99,9 +101,9 @@ class MainWindow:
 
         self.setup_ui()
 
-        # Show splash screen
-        splash = SplashScreen(self.root)
-        self.root.after(5000, self.show_login)  # Show login after splash screen finishes
+        # Show splash screen and schedule login
+        self.root.after(100, lambda: SplashScreen(self.root))
+        self.root.after(3000, self.show_login)
 
     def setup_ui(self):
         # Main container
