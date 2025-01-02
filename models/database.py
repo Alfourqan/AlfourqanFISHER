@@ -1,6 +1,27 @@
 import sqlite3
 import os
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
+
+class User(UserMixin):
+    def __init__(self, id, username, password_hash):
+        self.id = id
+        self.username = username
+        self.password_hash = password_hash
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    @staticmethod
+    def get(user_id):
+        db = Database()
+        cursor = db.conn.cursor()
+        cursor.execute('SELECT * FROM users WHERE id = ?', (user_id,))
+        user = cursor.fetchone()
+        if not user:
+            return None
+        return User(user[0], user[1], user[2])
 
 class Database:
     _instance = None
@@ -22,7 +43,6 @@ class Database:
     def connect(self):
         if self._connection is None:
             self._connection = sqlite3.connect(self.db_file, check_same_thread=False)
-            # Enable foreign key support
             self._connection.execute("PRAGMA foreign_keys = ON")
         return self._connection
 
@@ -32,6 +52,22 @@ class Database:
 
     def create_tables(self):
         cursor = self.conn.cursor()
+
+        # Users table
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY,
+            username TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL
+        )
+        ''')
+
+        # Insert default admin user
+        cursor.execute('''
+        INSERT OR IGNORE INTO users (username, password_hash)
+        VALUES (?, ?)
+        ''', ('admin', generate_password_hash('admin123')))
+
 
         # Produits
         cursor.execute('''
@@ -98,6 +134,14 @@ class Database:
         ''')
 
         self.conn.commit()
+
+    def authenticate_user(self, username, password):
+        cursor = self.conn.cursor()
+        cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
+        user = cursor.fetchone()
+        if user and check_password_hash(user[2], password):
+            return User(user[0], user[1], user[2])
+        return None
 
     def execute(self, query, params=()):
         cursor = self.conn.cursor()

@@ -1,16 +1,17 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import sv_ttk
-from views import products, sales, customers, invoices, suppliers, categories, inventory, cashier, reports, settings, home
+from views import products, sales, customers, invoices, suppliers, categories, inventory, cashier, reports, settings, home, auth
 
 class MainWindow:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("AL FOURQANE - Gestion de Poissonnerie")
         self.root.geometry("1200x800")
+        self.current_user = None
 
         # Configure theme colors
-        self.root.configure(bg="#004d40")  # Darker teal color
+        self.root.configure(bg="#004d40")
         sv_ttk.set_theme("dark")
         style = ttk.Style()
         style.configure(".", background="#004d40")
@@ -19,8 +20,7 @@ class MainWindow:
         style.configure("TButton", padding=5)
 
         self.setup_ui()
-        # Afficher la page d'accueil au démarrage
-        self.show_home()
+        self.show_login()
 
     def setup_ui(self):
         # Create main container with centered content
@@ -36,7 +36,7 @@ class MainWindow:
         menu_frame.pack(fill=tk.X, expand=False, pady=5)
 
         # Menu buttons with icons
-        menu_items = [
+        self.menu_items = [
             ("Accueil", "🏠", self.show_home),
             ("Produits", "🐟", self.show_products),
             ("Ventes", "💰", self.show_sales),
@@ -50,21 +50,49 @@ class MainWindow:
             ("Réglages", "⚙️", self.show_settings),
         ]
 
-        for text, icon, command in menu_items:
+        self.menu_buttons = []
+        for text, icon, command in self.menu_items:
             btn = ttk.Button(menu_frame, text=f"{icon} {text}", command=command, width=20)
             btn.pack(pady=2, padx=5)
+            self.menu_buttons.append(btn)
+            btn.configure(state="disabled")  # Initially disabled
 
         # Create a frame for the logout button at the bottom
         logout_frame = ttk.Frame(self.sidebar)
         logout_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=10)
 
         # Add logout button at the bottom
-        logout_btn = ttk.Button(logout_frame, text="🚪 Déconnexion", command=self.logout, width=20)
-        logout_btn.pack(pady=5, padx=5)
+        self.logout_btn = ttk.Button(logout_frame, text="🚪 Déconnexion", command=self.logout, width=20)
+        self.logout_btn.pack(pady=5, padx=5)
+        self.logout_btn.configure(state="disabled")  # Initially disabled
 
         # Content area with centered content
         self.content = ttk.Frame(self.main_container)
         self.content.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=20, pady=20)
+
+    def show_login(self):
+        self.clear_content()
+        login_window = auth.LoginWindow(callback=self.on_login_success)
+        self.root.wait_window(login_window.window)
+        if not self.current_user:
+            self.root.quit()
+
+    def on_login_success(self, user):
+        self.current_user = user
+        # Enable all menu buttons
+        for btn in self.menu_buttons:
+            btn.configure(state="normal")
+        self.logout_btn.configure(state="normal")
+        self.show_home()
+
+    def logout(self):
+        if messagebox.askyesno("Confirmation", "Voulez-vous vraiment vous déconnecter ?"):
+            self.current_user = None
+            # Disable all menu buttons
+            for btn in self.menu_buttons:
+                btn.configure(state="disabled")
+            self.logout_btn.configure(state="disabled")
+            self.show_login()
 
     def show_home(self):
         self.clear_content()
@@ -109,9 +137,6 @@ class MainWindow:
     def show_settings(self):
         self.clear_content()
         settings.SettingsView(self.content)
-
-    def logout(self):
-        self.root.quit()
 
     def clear_content(self):
         for widget in self.content.winfo_children():
