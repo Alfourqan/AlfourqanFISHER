@@ -11,28 +11,45 @@ class MainWindow:
         self.current_user = None
 
         # Configure theme colors
-        self.root.configure(bg="#004d40")
+        self.root.configure(bg="#1a1a2e")  # Dark blue background
         sv_ttk.set_theme("dark")
         style = ttk.Style()
-        style.configure(".", background="#004d40")
-        style.configure("TFrame", background="#004d40")
-        style.configure("TLabel", background="#004d40", foreground="white")
+        style.configure(".", background="#1a1a2e", foreground="white")
+        style.configure("TFrame", background="#1a1a2e")
+        style.configure("TLabel", background="#1a1a2e", foreground="white")
         style.configure("TButton", padding=5)
+
+        # Configure sidebar style
+        style.configure("Sidebar.TFrame", background="#16213e")
+        style.configure("Menu.TButton", 
+                       background="#16213e",
+                       padding=(10, 5, 10, 5),
+                       width=20,
+                       anchor="w")  # Left alignment
 
         self.setup_ui()
         self.show_login()
 
     def setup_ui(self):
-        # Create main container with centered content
-        self.main_container = ttk.Frame(self.root)
+        # Create main container
+        self.main_container = ttk.Frame(self.root, style="TFrame")
         self.main_container.pack(fill=tk.BOTH, expand=True)
 
-        # Create sidebar
-        self.sidebar = ttk.Frame(self.main_container)
+        # Create sidebar with dark blue background
+        self.sidebar = ttk.Frame(self.main_container, style="Sidebar.TFrame")
         self.sidebar.pack(side=tk.LEFT, fill=tk.Y)
 
-        # Menu buttons frame (for all buttons except logout)
-        menu_frame = ttk.Frame(self.sidebar)
+        # Add app title to sidebar
+        title_frame = ttk.Frame(self.sidebar, style="Sidebar.TFrame")
+        title_frame.pack(fill=tk.X, pady=(20, 30))
+        ttk.Label(title_frame, 
+                 text="AL FOURQANE",
+                 font=('Helvetica', 16, 'bold'),
+                 foreground="white",
+                 background="#16213e").pack(anchor=tk.CENTER)
+
+        # Menu buttons frame
+        menu_frame = ttk.Frame(self.sidebar, style="Sidebar.TFrame")
         menu_frame.pack(fill=tk.X, expand=False, pady=5)
 
         # Menu buttons with icons
@@ -52,23 +69,28 @@ class MainWindow:
 
         self.menu_buttons = []
         for text, icon, command in self.menu_items:
-            btn = ttk.Button(menu_frame, text=f"{icon} {text}", command=command, width=20)
-            btn.pack(pady=2, padx=5)
+            btn = ttk.Button(menu_frame, 
+                           text=f"{icon}  {text}", 
+                           command=command,
+                           style="Menu.TButton")
+            btn.pack(pady=2, padx=5, fill=tk.X)
             self.menu_buttons.append(btn)
-            btn.configure(state="disabled")  # Initially disabled
+            btn.configure(state="disabled")
 
-        # Create a frame for the logout button at the bottom
-        logout_frame = ttk.Frame(self.sidebar)
-        logout_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=10)
+        # Logout button frame at bottom
+        logout_frame = ttk.Frame(self.sidebar, style="Sidebar.TFrame")
+        logout_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=20)
 
-        # Add logout button at the bottom
-        self.logout_btn = ttk.Button(logout_frame, text="🚪 Déconnexion", command=self.logout, width=20)
-        self.logout_btn.pack(pady=5, padx=5)
-        self.logout_btn.configure(state="disabled")  # Initially disabled
+        self.logout_btn = ttk.Button(logout_frame, 
+                                   text="🚪  Déconnexion",
+                                   command=self.logout,
+                                   style="Menu.TButton")
+        self.logout_btn.pack(pady=5, padx=5, fill=tk.X)
+        self.logout_btn.configure(state="disabled")
 
-        # Content area with centered content
-        self.content = ttk.Frame(self.main_container)
-        self.content.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=20, pady=20)
+        # Content area
+        self.content = ttk.Frame(self.main_container, style="TFrame")
+        self.content.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=30, pady=30)
 
     def show_login(self):
         self.clear_content()
