@@ -8,11 +8,11 @@ class MainWindow:
         self.root = tk.Tk()
         self.root.title("AL FOURQANE - Gestion de Poissonnerie")
         self.root.geometry("1200x800")
-        
+
         # Configure theme colors
         self.root.configure(bg="#00796b")
         sv_ttk.set_theme("dark")
-        
+
         self.setup_ui()
 
     def setup_ui(self):
@@ -21,8 +21,12 @@ class MainWindow:
         self.main_container.pack(fill=tk.BOTH, expand=True)
 
         # Create sidebar
-        self.sidebar = ttk.Frame(self.main_container, width=200)
+        self.sidebar = ttk.Frame(self.main_container)
         self.sidebar.pack(side=tk.LEFT, fill=tk.Y)
+
+        # Menu buttons frame (for all buttons except logout)
+        menu_frame = ttk.Frame(self.sidebar)
+        menu_frame.pack(fill=tk.X, expand=False, pady=5)
 
         # Menu buttons with icons
         menu_items = [
@@ -36,12 +40,19 @@ class MainWindow:
             ("Caisse", "💵", self.show_cashier),
             ("Rapport", "📊", self.show_reports),
             ("Réglages", "⚙️", self.show_settings),
-            ("Déconnexion", "🚪", self.logout)
         ]
 
         for text, icon, command in menu_items:
-            btn = ttk.Button(self.sidebar, text=f"{icon} {text}", command=command, width=20)
-            btn.pack(pady=5, padx=5)
+            btn = ttk.Button(menu_frame, text=f"{icon} {text}", command=command, width=20)
+            btn.pack(pady=2, padx=5)
+
+        # Create a frame for the logout button at the bottom
+        logout_frame = ttk.Frame(self.sidebar)
+        logout_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=10)
+
+        # Add logout button at the bottom
+        logout_btn = ttk.Button(logout_frame, text="🚪 Déconnexion", command=self.logout, width=20)
+        logout_btn.pack(pady=5, padx=5)
 
         # Content area
         self.content = ttk.Frame(self.main_container)
