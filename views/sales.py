@@ -140,17 +140,19 @@ class SaleDialog:
         product_frame = ttk.Frame(products_frame)
         product_frame.pack(fill=tk.X, padx=5, pady=5)
 
-        ttk.Label(product_frame, text="Produit:").pack(side=tk.LEFT)
+        ttk.Label(product_frame, text="Produit:").pack(side=tk.LEFT, padx=(0, 5))
         self.product_var = tk.StringVar()
-        self.product_combo = ttk.Combobox(product_frame, textvariable=self.product_var)
+        self.product_combo = ttk.Combobox(product_frame, textvariable=self.product_var, width=30)
         self.load_products()
         self.product_combo.pack(side=tk.LEFT, padx=5)
 
         ttk.Label(product_frame, text="Quantité (kg):").pack(side=tk.LEFT, padx=5)
         self.quantity_var = tk.StringVar()
-        ttk.Entry(product_frame, textvariable=self.quantity_var, width=10).pack(side=tk.LEFT)
+        quantity_entry = ttk.Entry(product_frame, textvariable=self.quantity_var, width=10)
+        quantity_entry.pack(side=tk.LEFT, padx=5)
 
-        ttk.Button(product_frame, text="Ajouter", command=self.add_product).pack(side=tk.LEFT, padx=5)
+        add_button = ttk.Button(product_frame, text="Ajouter", command=self.add_product)
+        add_button.pack(side=tk.LEFT, padx=5)
 
         # Products list
         self.products_tree = ttk.Treeview(products_frame, 
