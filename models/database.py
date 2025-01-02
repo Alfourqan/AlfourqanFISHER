@@ -3,26 +3,39 @@ import os
 from datetime import datetime
 
 class Database:
-    def __init__(self):
-        self.db_file = "poissonnerie.db"
-        self.conn = None
-        self.init_db()
+    _instance = None
+    _connection = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(Database, cls).__new__(cls)
+            cls._instance.db_file = "poissonnerie.db"
+            cls._instance.init_db()
+        return cls._instance
 
     def init_db(self):
-        create_tables = True
-        if os.path.exists(self.db_file):
-            create_tables = False
-            
-        self.conn = sqlite3.connect(self.db_file)
+        create_tables = not os.path.exists(self.db_file)
+        self.connect()
         if create_tables:
             self.create_tables()
 
+    def connect(self):
+        if self._connection is None:
+            self._connection = sqlite3.connect(self.db_file, check_same_thread=False)
+            # Enable foreign key support
+            self._connection.execute("PRAGMA foreign_keys = ON")
+        return self._connection
+
+    @property
+    def conn(self):
+        return self.connect()
+
     def create_tables(self):
         cursor = self.conn.cursor()
-        
+
         # Produits
         cursor.execute('''
-        CREATE TABLE products (
+        CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             price REAL NOT NULL,
@@ -34,7 +47,7 @@ class Database:
 
         # Catégories
         cursor.execute('''
-        CREATE TABLE categories (
+        CREATE TABLE IF NOT EXISTS categories (
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL
         )
@@ -42,7 +55,7 @@ class Database:
 
         # Clients
         cursor.execute('''
-        CREATE TABLE customers (
+        CREATE TABLE IF NOT EXISTS customers (
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             phone TEXT,
@@ -52,7 +65,7 @@ class Database:
 
         # Fournisseurs
         cursor.execute('''
-        CREATE TABLE suppliers (
+        CREATE TABLE IF NOT EXISTS suppliers (
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             phone TEXT,
@@ -62,7 +75,7 @@ class Database:
 
         # Ventes
         cursor.execute('''
-        CREATE TABLE sales (
+        CREATE TABLE IF NOT EXISTS sales (
             id INTEGER PRIMARY KEY,
             date TEXT NOT NULL,
             customer_id INTEGER,
@@ -73,7 +86,7 @@ class Database:
 
         # Détails des ventes
         cursor.execute('''
-        CREATE TABLE sale_items (
+        CREATE TABLE IF NOT EXISTS sale_items (
             id INTEGER PRIMARY KEY,
             sale_id INTEGER,
             product_id INTEGER,
@@ -86,6 +99,12 @@ class Database:
 
         self.conn.commit()
 
+    def execute(self, query, params=()):
+        cursor = self.conn.cursor()
+        cursor.execute(query, params)
+        return cursor
+
     def close(self):
-        if self.conn:
-            self.conn.close()
+        if self._connection:
+            self._connection.close()
+            self._connection = None

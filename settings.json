@@ -1,0 +1,10 @@
+{
+    "company_name": "AL FOURQANE",
+    "address": "",
+    "phone": "",
+    "reports_folder": "rapports",
+    "backup_folder": "backup",
+    "theme": "Clair",
+    "font_size": "14",
+    "auto_backup": true
+}
