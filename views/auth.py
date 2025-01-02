@@ -91,15 +91,15 @@ class LoginWindow:
         btn_frame.pack(fill=tk.X, pady=(40, 0))  # Increased spacing
 
         ttk.Button(btn_frame,
-                  text="Connexion",
-                  command=self.login,
-                  style="Login.TButton",
-                  width=20).pack(side=tk.LEFT, padx=5)  # Increased width
+                   text="Connexion",
+                   command=self.login,
+                   style="Login.TButton",
+                   width=20).pack(side=tk.LEFT, padx=5)  # Increased width
         ttk.Button(btn_frame,
-                  text="Annuler",
-                  command=self.window.destroy,
-                  style="Login.TButton",
-                  width=20).pack(side=tk.LEFT)  # Increased width
+                   text="Annuler",
+                   command=self.window.destroy,
+                   style="Login.TButton",
+                   width=20).pack(side=tk.LEFT)  # Increased width
 
         # Bind enter key to login
         self.window.bind('<Return>', lambda e: self.login())
