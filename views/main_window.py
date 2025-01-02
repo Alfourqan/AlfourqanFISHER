@@ -22,7 +22,7 @@ class SplashScreen:
         self.splash.configure(bg="#1a1a2e")
 
         # Make it modal and remove decorations
-        self.splash.transient(parent)
+        self.splash.transient()
         self.splash.grab_set()
         self.splash.overrideredirect(True)
 
@@ -101,8 +101,8 @@ class MainWindow:
 
         self.setup_ui()
 
-        # Show splash screen and schedule login
-        self.root.after(100, lambda: SplashScreen(self.root))
+        # Show splash screen
+        splash = SplashScreen(self.root)
         self.root.after(3000, self.show_login)
 
     def setup_ui(self):
@@ -126,11 +126,6 @@ class MainWindow:
         # Menu buttons frame
         menu_frame = ttk.Frame(self.sidebar, style="Sidebar.TFrame")
         menu_frame.pack(fill=tk.X, expand=False)
-
-        # Top menu frame (dots)
-        top_menu = ttk.Frame(self.main_container, style="TFrame")
-        top_menu.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
-        ttk.Label(top_menu, text="○ ○ ○", font=('Helvetica', 12), foreground="white").pack(side=tk.RIGHT, padx=10)
 
         # Menu buttons with icons
         self.menu_items = [
