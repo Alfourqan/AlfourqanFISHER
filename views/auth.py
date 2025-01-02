@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from models.database import Database
+import ttkthemes as ttk
 
 class LoginWindow:
     def __init__(self, callback=None):
@@ -33,73 +34,65 @@ class LoginWindow:
         main_frame.pack(expand=True, fill='both', padx=40, pady=40)
 
         # Title
-        title_label = tk.Label(
+        ttk.Label(
             main_frame,
-            text="AL FOURQANE",
+            text="🐟 AL FOURQANE",
             font=('Helvetica', 24, 'bold'),
             bg="#1a1a2e",
             fg="white"
-        )
-        title_label.pack(pady=(0, 20))
+        ).pack(pady=(0, 20))
 
         # Subtitle
-        subtitle_label = tk.Label(
+        ttk.Label(
             main_frame,
             text="Connexion",
             font=('Helvetica', 18),
             bg="#1a1a2e",
             fg="white"
-        )
-        subtitle_label.pack(pady=(0, 40))
+        ).pack(pady=(0, 40))
 
         # Username
-        username_label = tk.Label(
+        ttk.Label(
             main_frame,
             text="Utilisateur:",
             font=('Helvetica', 12),
             bg="#1a1a2e",
             fg="white"
-        )
-        username_label.pack(anchor='w')
+        ).pack(anchor='w')
 
         self.username_var = tk.StringVar()
-        username_entry = tk.Entry(
+        ttk.Entry(
             main_frame,
             textvariable=self.username_var,
             font=('Helvetica', 12),
             bg="#16213e",
-            fg="white",
-            insertbackground="white"
-        )
-        username_entry.pack(fill='x', pady=(5, 20))
+            fg="white"
+        ).pack(fill='x', pady=(5, 20))
 
         # Password
-        password_label = tk.Label(
+        ttk.Label(
             main_frame,
             text="Mot de passe:",
             font=('Helvetica', 12),
             bg="#1a1a2e",
             fg="white"
-        )
-        password_label.pack(anchor='w')
+        ).pack(anchor='w')
 
         self.password_var = tk.StringVar()
-        password_entry = tk.Entry(
+        ttk.Entry(
             main_frame,
             textvariable=self.password_var,
             show="*",
             font=('Helvetica', 12),
             bg="#16213e",
-            fg="white",
-            insertbackground="white"
-        )
-        password_entry.pack(fill='x', pady=(5, 40))
+            fg="white"
+        ).pack(fill='x', pady=(5, 40))
 
         # Buttons frame
         button_frame = tk.Frame(main_frame, bg="#1a1a2e")
         button_frame.pack(fill='x', pady=(0, 20))
 
-        # Login button
+        # Login button with hover effect
         login_button = tk.Button(
             button_frame,
             text="Se connecter",
@@ -109,15 +102,11 @@ class LoginWindow:
             fg="white",
             activebackground="#0077b6",
             activeforeground="white",
-            relief=tk.RAISED,
-            bd=0,
-            padx=20,
-            pady=10,
             cursor="hand2"
         )
-        login_button.pack(side=tk.LEFT, padx=(0, 10), expand=True)
+        login_button.pack(side=tk.LEFT, expand=True, padx=5, pady=5, fill='x')
 
-        # Cancel button
+        # Cancel button with hover effect
         cancel_button = tk.Button(
             button_frame,
             text="Annuler",
@@ -127,19 +116,12 @@ class LoginWindow:
             fg="white",
             activebackground="#c82333",
             activeforeground="white",
-            relief=tk.RAISED,
-            bd=0,
-            padx=20,
-            pady=10,
             cursor="hand2"
         )
-        cancel_button.pack(side=tk.LEFT, expand=True)
+        cancel_button.pack(side=tk.LEFT, expand=True, padx=5, pady=5, fill='x')
 
         # Bind enter key to login
         self.window.bind('<Return>', lambda e: self.login())
-
-        # Initial focus
-        username_entry.focus_set()
 
     def login(self):
         username = self.username_var.get()
