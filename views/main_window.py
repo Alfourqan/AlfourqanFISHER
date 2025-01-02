@@ -4,12 +4,16 @@ import sv_ttk
 from views import products, sales, customers, invoices, suppliers, categories, inventory, cashier, reports, settings, home, auth
 
 class SplashScreen:
+    """
+    Écran de démarrage qui s'affiche au lancement de l'application.
+    Affiche le logo, le titre et une barre de progression.
+    """
     def __init__(self, parent):
         self.parent = parent
         self.splash = tk.Toplevel(parent)
         self.splash.title("AL FOURQANE")
 
-        # Configure window size (fixed size instead of fullscreen)
+        # Configuration de la taille de la fenêtre (taille fixe au lieu de plein écran)
         width = 600
         height = 400
         screen_width = self.splash.winfo_screenwidth()
@@ -18,19 +22,19 @@ class SplashScreen:
         y = (screen_height - height) // 2
         self.splash.geometry(f"{width}x{height}+{x}+{y}")
 
-        # Configure theme colors
+        # Configuration des couleurs du thème
         self.splash.configure(bg="#1a1a2e")
 
-        # Make it modal and remove decorations
+        # Rendre la fenêtre modale et supprimer les décorations
         self.splash.transient()
         self.splash.grab_set()
         self.splash.overrideredirect(True)
 
-        # Center the content
+        # Centrer le contenu
         content_frame = tk.Frame(self.splash, bg="#1a1a2e")
         content_frame.place(relx=0.5, rely=0.5, anchor="center")
 
-        # Logo and title
+        # Logo et titre
         tk.Label(
             content_frame,
             text="🐟",
@@ -47,7 +51,7 @@ class SplashScreen:
             fg="white"
         ).pack(pady=20)
 
-        # Progress bar
+        # Barre de progression
         self.progress = ttk.Progressbar(
             content_frame,
             length=300,
@@ -55,12 +59,13 @@ class SplashScreen:
         )
         self.progress.pack(pady=30)
 
-        # Start animation
+        # Démarrer l'animation
         self.progress['maximum'] = 100
         self.progress['value'] = 0
         self.animate()
 
     def animate(self):
+        """Anime la barre de progression jusqu'à 100%"""
         if self.progress['value'] < 100:
             self.progress['value'] += 5
             self.splash.after(50, self.animate)
@@ -68,20 +73,25 @@ class SplashScreen:
             self.splash.after(500, self.finish)
 
     def finish(self):
+        """Ferme l'écran de démarrage et affiche la fenêtre principale"""
         self.splash.destroy()
         self.parent.deiconify()
 
 class MainWindow:
+    """
+    Fenêtre principale de l'application.
+    Gère l'interface utilisateur, la navigation et l'authentification.
+    """
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("AL FOURQANE")
         self.root.geometry("1200x800")
         self.current_user = None
 
-        # Hide main window initially
+        # Cacher la fenêtre principale initialement
         self.root.withdraw()
 
-        # Configure theme colors
+        # Configuration des couleurs et du thème
         self.root.configure(bg="#1a1a2e")
         sv_ttk.set_theme("dark")
         style = ttk.Style()
@@ -90,7 +100,7 @@ class MainWindow:
         style.configure("TLabel", background="#1a1a2e", foreground="white")
         style.configure("TButton", padding=5)
 
-        # Configure sidebar style
+        # Configuration du style de la barre latérale
         style.configure("Sidebar.TFrame", background="#16213e")
         style.configure("Menu.TButton", 
                        background="#16213e",
@@ -101,20 +111,21 @@ class MainWindow:
 
         self.setup_ui()
 
-        # Show splash screen
+        # Afficher l'écran de démarrage
         splash = SplashScreen(self.root)
         self.root.after(3000, self.show_login)
 
     def setup_ui(self):
-        # Main container
+        """Configure l'interface utilisateur principale"""
+        # Conteneur principal
         self.main_container = ttk.Frame(self.root, style="TFrame")
         self.main_container.pack(fill=tk.BOTH, expand=True)
 
-        # Create sidebar with dark blue background
+        # Barre latérale avec fond bleu foncé
         self.sidebar = ttk.Frame(self.main_container, style="Sidebar.TFrame")
         self.sidebar.pack(side=tk.LEFT, fill=tk.Y)
 
-        # Add app title to sidebar
+        # Titre de l'application dans la barre latérale
         title_frame = ttk.Frame(self.sidebar, style="Sidebar.TFrame")
         title_frame.pack(fill=tk.X, pady=(20, 30))
         ttk.Label(title_frame, 
@@ -123,11 +134,11 @@ class MainWindow:
                  foreground="white",
                  background="#16213e").pack(anchor=tk.W, padx=20)
 
-        # Menu buttons frame
+        # Cadre des boutons du menu
         menu_frame = ttk.Frame(self.sidebar, style="Sidebar.TFrame")
         menu_frame.pack(fill=tk.X, expand=False)
 
-        # Menu buttons with icons
+        # Boutons du menu avec icônes
         self.menu_items = [
             ("Accueil", "🏠", self.show_home),
             ("Produits", "🐟", self.show_products),
@@ -142,17 +153,18 @@ class MainWindow:
             ("Réglages", "⚙️", self.show_settings),
         ]
 
+        # Création des boutons du menu
         self.menu_buttons = []
         for text, icon, command in self.menu_items:
             btn = ttk.Button(menu_frame, 
-                           text=f"{icon}  {text}", 
-                           command=command,
-                           style="Menu.TButton")
+                          text=f"{icon}  {text}", 
+                          command=command,
+                          style="Menu.TButton")
             btn.pack(pady=1, fill=tk.X)
             self.menu_buttons.append(btn)
-            btn.configure(state="disabled")
+            btn.configure(state="disabled")  # Désactivé jusqu'à la connexion
 
-        # Logout button frame at bottom
+        # Bouton de déconnexion en bas de la barre latérale
         logout_frame = ttk.Frame(self.sidebar, style="Sidebar.TFrame")
         logout_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=20)
 
@@ -163,11 +175,12 @@ class MainWindow:
         self.logout_btn.pack(fill=tk.X)
         self.logout_btn.configure(state="disabled")
 
-        # Content area
+        # Zone de contenu principal
         self.content = ttk.Frame(self.main_container, style="TFrame")
         self.content.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=30, pady=30)
 
     def show_login(self):
+        """Affiche la fenêtre de connexion"""
         self.clear_content()
         login_window = auth.LoginWindow(callback=self.on_login_success)
         self.root.wait_window(login_window.window)
@@ -175,69 +188,85 @@ class MainWindow:
             self.root.quit()
 
     def on_login_success(self, user):
+        """Callback appelé après une connexion réussie"""
         self.current_user = user
-        # Enable all menu buttons
+        # Activer tous les boutons du menu
         for btn in self.menu_buttons:
             btn.configure(state="normal")
         self.logout_btn.configure(state="normal")
         self.show_home()
 
     def logout(self):
+        """Gère la déconnexion de l'utilisateur"""
         if messagebox.askyesno("Confirmation", "Voulez-vous vraiment vous déconnecter ?"):
             self.current_user = None
-            # Disable all menu buttons
+            # Désactiver tous les boutons du menu
             for btn in self.menu_buttons:
                 btn.configure(state="disabled")
             self.logout_btn.configure(state="disabled")
             self.show_login()
 
+    # Méthodes de navigation pour chaque section
     def show_home(self):
+        """Affiche la page d'accueil"""
         self.clear_content()
         home.HomeView(self.content)
 
     def show_products(self):
+        """Affiche la gestion des produits"""
         self.clear_content()
         products.ProductsView(self.content)
 
     def show_sales(self):
+        """Affiche la gestion des ventes"""
         self.clear_content()
         sales.SalesView(self.content)
 
     def show_customers(self):
+        """Affiche la gestion des clients"""
         self.clear_content()
         customers.CustomersView(self.content)
 
     def show_invoices(self):
+        """Affiche la gestion des factures"""
         self.clear_content()
         invoices.InvoicesView(self.content)
 
     def show_suppliers(self):
+        """Affiche la gestion des fournisseurs"""
         self.clear_content()
         suppliers.SuppliersView(self.content)
 
     def show_categories(self):
+        """Affiche la gestion des catégories"""
         self.clear_content()
         categories.CategoriesView(self.content)
 
     def show_inventory(self):
+        """Affiche la gestion de l'inventaire"""
         self.clear_content()
         inventory.InventoryView(self.content)
 
     def show_cashier(self):
+        """Affiche la caisse"""
         self.clear_content()
         cashier.CashierView(self.content)
 
     def show_reports(self):
+        """Affiche les rapports"""
         self.clear_content()
         reports.ReportsView(self.content)
 
     def show_settings(self):
+        """Affiche les paramètres"""
         self.clear_content()
         settings.SettingsView(self.content)
 
     def clear_content(self):
+        """Nettoie la zone de contenu principal"""
         for widget in self.content.winfo_children():
             widget.destroy()
 
     def run(self):
+        """Lance l'application"""
         self.root.mainloop()
