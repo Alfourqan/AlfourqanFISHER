@@ -153,9 +153,8 @@ class SaleDialog:
         quantity_entry = ttk.Entry(input_frame, textvariable=self.quantity_var, width=10)
         quantity_entry.grid(row=0, column=3, padx=5, pady=5)
 
-        # Add button
-        add_button = ttk.Button(input_frame, text="Ajouter", command=self.add_product, style="Accent.TButton")
-        add_button.grid(row=0, column=4, padx=5, pady=5)
+        # Add button - only defined once
+        ttk.Button(input_frame, text="Ajouter", command=self.add_product, style="Accent.TButton").grid(row=0, column=4, padx=5, pady=5)
 
         # Products list
         list_frame = ttk.LabelFrame(main_frame, text="Produits sélectionnés")
