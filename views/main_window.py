@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import sv_ttk
-from views import products, sales, customers, invoices, suppliers, categories, inventory, cashier, reports, settings
+from views import products, sales, customers, invoices, suppliers, categories, inventory, cashier, reports, settings, home
 
 class MainWindow:
     def __init__(self):
@@ -19,6 +19,8 @@ class MainWindow:
         style.configure("TButton", padding=5)
 
         self.setup_ui()
+        # Afficher la page d'accueil au démarrage
+        self.show_home()
 
     def setup_ui(self):
         # Create main container with centered content
@@ -35,6 +37,7 @@ class MainWindow:
 
         # Menu buttons with icons
         menu_items = [
+            ("Accueil", "🏠", self.show_home),
             ("Produits", "🐟", self.show_products),
             ("Ventes", "💰", self.show_sales),
             ("Clients", "👥", self.show_customers),
@@ -62,6 +65,10 @@ class MainWindow:
         # Content area with centered content
         self.content = ttk.Frame(self.main_container)
         self.content.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=20, pady=20)
+
+    def show_home(self):
+        self.clear_content()
+        home.HomeView(self.content)
 
     def show_products(self):
         self.clear_content()
