@@ -3,6 +3,72 @@ from tkinter import ttk, messagebox
 import sv_ttk
 from views import products, sales, customers, invoices, suppliers, categories, inventory, cashier, reports, settings, home, auth
 
+class SplashScreen:
+    def __init__(self, parent):
+        self.parent = parent
+        self.splash = tk.Toplevel(parent)
+        self.splash.title("")
+
+        # Make it fullscreen
+        width = self.splash.winfo_screenwidth()
+        height = self.splash.winfo_screenheight()
+        self.splash.geometry(f"{width}x{height}")
+
+        # Configure theme colors
+        self.splash.configure(bg="#1a1a2e")
+
+        # Center the content
+        content_frame = tk.Frame(self.splash, bg="#1a1a2e")
+        content_frame.place(relx=0.5, rely=0.5, anchor="center")
+
+        # Logo and title
+        title_label = tk.Label(
+            content_frame,
+            text="🐟",
+            font=('Helvetica', 120),
+            bg="#1a1a2e",
+            fg="white"
+        )
+        title_label.pack()
+
+        name_label = tk.Label(
+            content_frame,
+            text="AL FOURQANE",
+            font=('Helvetica', 48, 'bold'),
+            bg="#1a1a2e",
+            fg="white"
+        )
+        name_label.pack(pady=20)
+
+        # Progress bar
+        self.progress = ttk.Progressbar(
+            content_frame,
+            length=400,
+            mode='determinate'
+        )
+        self.progress.pack(pady=30)
+
+        # Remove window decorations
+        self.splash.overrideredirect(True)
+        self.splash.lift()
+        self.splash.grab_set()
+
+        # Start animation
+        self.progress['maximum'] = 100
+        self.progress['value'] = 0
+        self.animate()
+
+    def animate(self):
+        if self.progress['value'] < 100:
+            self.progress['value'] += 2
+            self.splash.after(20, self.animate)
+        else:
+            self.splash.after(500, self.finish)
+
+    def finish(self):
+        self.splash.destroy()
+        self.parent.deiconify()
+
 class MainWindow:
     def __init__(self):
         self.root = tk.Tk()
@@ -10,8 +76,11 @@ class MainWindow:
         self.root.geometry("1200x800")
         self.current_user = None
 
+        # Hide main window initially
+        self.root.withdraw()
+
         # Configure theme colors
-        self.root.configure(bg="#1a1a2e")  # Dark blue background
+        self.root.configure(bg="#1a1a2e")
         sv_ttk.set_theme("dark")
         style = ttk.Style()
         style.configure(".", background="#1a1a2e", foreground="white")
@@ -26,10 +95,13 @@ class MainWindow:
                        foreground="white",
                        padding=(20, 10, 20, 10),
                        width=20,
-                       anchor="w")  # Left alignment
+                       anchor="w")
 
         self.setup_ui()
-        self.show_login()
+
+        # Show splash screen
+        splash = SplashScreen(self.root)
+        self.root.after(5000, self.show_login)  # Show login after splash screen finishes
 
     def setup_ui(self):
         # Main container
@@ -88,9 +160,9 @@ class MainWindow:
         logout_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=20)
 
         self.logout_btn = ttk.Button(logout_frame, 
-                                   text="🚪  Déconnexion",
-                                   command=self.logout,
-                                   style="Menu.TButton")
+                                  text="🚪  Déconnexion",
+                                  command=self.logout,
+                                  style="Menu.TButton")
         self.logout_btn.pack(fill=tk.X)
         self.logout_btn.configure(state="disabled")
 
