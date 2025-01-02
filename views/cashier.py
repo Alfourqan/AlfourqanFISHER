@@ -238,14 +238,40 @@ class QuantityDialog:
         self.quantity = None
         self.setup_ui()
 
+        # Make dialog modal
+        self.top.transient(parent)
+        self.top.grab_set()
+
+        # Center dialog
+        self.top.update_idletasks()
+        width = self.top.winfo_width()
+        height = self.top.winfo_height()
+        x = parent.winfo_rootx() + (parent.winfo_width() - width) // 2
+        y = parent.winfo_rooty() + (parent.winfo_height() - height) // 2
+        self.top.geometry(f"+{x}+{y}")
+
     def setup_ui(self):
         self.top.title("Quantité")
+        self.top.resizable(False, False)  # Make window non-resizable
 
-        ttk.Label(self.top, text="Quantité (kg):").grid(row=0, column=0, padx=5, pady=5)
+        # Main frame with padding
+        main_frame = ttk.Frame(self.top, padding="10")
+        main_frame.pack(fill=tk.BOTH, expand=True)
+
+        ttk.Label(main_frame, text="Quantité (kg):").pack(side=tk.LEFT, padx=5)
         self.quantity_var = tk.StringVar()
-        ttk.Entry(self.top, textvariable=self.quantity_var).grid(row=0, column=1, padx=5, pady=5)
+        ttk.Entry(main_frame, textvariable=self.quantity_var, width=10).pack(side=tk.LEFT, padx=5)
 
-        ttk.Button(self.top, text="OK", command=self.validate).grid(row=1, column=0, columnspan=2, pady=10)
+        # Buttons frame
+        btn_frame = ttk.Frame(self.top)
+        btn_frame.pack(fill=tk.X, pady=(10, 5))
+
+        ttk.Button(btn_frame, text="OK", command=self.validate, default="active").pack(side=tk.LEFT, expand=True, padx=5)
+        ttk.Button(btn_frame, text="Annuler", command=self.cancel).pack(side=tk.LEFT, expand=True, padx=5)
+
+        # Bind Enter key to validate
+        self.top.bind('<Return>', lambda e: self.validate())
+        self.top.bind('<Escape>', lambda e: self.cancel())
 
     def validate(self):
         try:
@@ -260,3 +286,7 @@ class QuantityDialog:
 
         except ValueError as e:
             messagebox.showerror("Erreur", str(e))
+
+    def cancel(self):
+        self.quantity = None
+        self.top.destroy()
