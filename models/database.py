@@ -155,6 +155,21 @@ class Database:
         )
         ''')
 
+        # Table des factures
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS invoices (
+            id INTEGER PRIMARY KEY,
+            sale_id INTEGER UNIQUE NOT NULL,
+            invoice_number TEXT UNIQUE NOT NULL,
+            date_created TEXT NOT NULL,
+            due_date TEXT,
+            status TEXT NOT NULL DEFAULT 'pending',
+            payment_status TEXT NOT NULL DEFAULT 'unpaid',
+            notes TEXT,
+            FOREIGN KEY (sale_id) REFERENCES sales (id)
+        )
+        ''')
+
         self.conn.commit()
 
     def authenticate_user(self, username, password):
