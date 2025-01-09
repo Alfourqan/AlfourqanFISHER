@@ -28,14 +28,20 @@ class Database:
     def connect(self):
         """Établit une connexion à la base de données SQLite"""
         if self._connection is None:
-            self._connection = sqlite3.connect(self.db_file, check_same_thread=False)
+            self._connection = sqlite3.connect(self.db_file, check_same_thread=False, timeout=30)
             self._connection.execute("PRAGMA foreign_keys = ON")
             self._connection.execute("PRAGMA journal_mode = WAL")
             self._connection.execute("PRAGMA synchronous = OFF")
-            self._connection.execute("PRAGMA cache_size = -4000")
+            self._connection.execute("PRAGMA cache_size = -8000")
             self._connection.execute("PRAGMA temp_store = MEMORY")
             self._connection.execute("PRAGMA mmap_size = 30000000000")
+            self._connection.execute("PRAGMA page_size = 4096")
+            self._connection.execute("PRAGMA busy_timeout = 5000")
             self._connection.row_factory = sqlite3.Row
+            # Créer des index pour optimiser les recherches fréquentes
+            self._connection.execute("CREATE INDEX IF NOT EXISTS idx_products_name ON products(name)")
+            self._connection.execute("CREATE INDEX IF NOT EXISTS idx_sales_date ON sales(date)")
+            self._connection.execute("CREATE INDEX IF NOT EXISTS idx_customers_name ON customers(name)")
         return self._connection
 
     @property

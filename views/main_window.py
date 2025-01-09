@@ -264,9 +264,13 @@ class MainWindow:
         settings.SettingsView(self.content)
 
     def clear_content(self):
-        """Nettoie la zone de contenu principal"""
+        """Nettoie la zone de contenu principal de manière optimisée"""
+        if hasattr(self, '_current_view'):
+            if hasattr(self._current_view, 'destroy'):
+                self._current_view.destroy()
         for widget in self.content.winfo_children():
             widget.destroy()
+        self.content.update_idletasks()
 
     def run(self):
         """Lance l'application"""
