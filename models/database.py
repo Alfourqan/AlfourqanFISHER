@@ -118,6 +118,10 @@ class Database:
             date TEXT NOT NULL,
             customer_id INTEGER,
             total REAL NOT NULL,
+            status TEXT DEFAULT 'pending',
+            payment_method TEXT,
+            discount REAL DEFAULT 0.0,
+            tax REAL DEFAULT 0.0,
             FOREIGN KEY (customer_id) REFERENCES customers (id)
         )
         ''')
@@ -132,6 +136,22 @@ class Database:
             price REAL NOT NULL,
             FOREIGN KEY (sale_id) REFERENCES sales (id),
             FOREIGN KEY (product_id) REFERENCES products (id)
+        )
+        ''')
+
+        # Table des mouvements d'inventaire
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS inventory_movements (
+            id INTEGER PRIMARY KEY,
+            product_id INTEGER,
+            quantity REAL NOT NULL,
+            movement_type TEXT NOT NULL,
+            date TEXT NOT NULL,
+            supplier_id INTEGER,
+            sale_id INTEGER,
+            FOREIGN KEY (product_id) REFERENCES products (id),
+            FOREIGN KEY (supplier_id) REFERENCES suppliers (id),
+            FOREIGN KEY (sale_id) REFERENCES sales (id)
         )
         ''')
 
