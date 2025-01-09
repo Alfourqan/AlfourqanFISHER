@@ -3,11 +3,13 @@ from tkinter import ttk, messagebox
 import sv_ttk
 from views import products, sales, customers, invoices, suppliers, categories, inventory, cashier, reports, settings, home, auth
 
+
 class SplashScreen:
     """
     Écran de démarrage qui s'affiche au lancement de l'application.
     Affiche le logo, le titre et une barre de progression.
     """
+
     def __init__(self, parent):
         self.parent = parent
         self.splash = tk.Toplevel(parent)
@@ -35,28 +37,22 @@ class SplashScreen:
         content_frame.place(relx=0.5, rely=0.5, anchor="center")
 
         # Logo et titre
-        tk.Label(
-            content_frame,
-            text="🐟",
-            font=('Helvetica', 100),
-            bg="#1a1a2e",
-            fg="white"
-        ).pack()
+        tk.Label(content_frame,
+                 text="🐟",
+                 font=('Helvetica', 100),
+                 bg="#1a1a2e",
+                 fg="white").pack()
 
-        tk.Label(
-            content_frame,
-            text="AL FOURQANE",
-            font=('Helvetica', 36, 'bold'),
-            bg="#1a1a2e",
-            fg="white"
-        ).pack(pady=20)
+        tk.Label(content_frame,
+                 text="AL FOURQANE",
+                 font=('Helvetica', 36, 'bold'),
+                 bg="#1a1a2e",
+                 fg="white").pack(pady=20)
 
         # Barre de progression
-        self.progress = ttk.Progressbar(
-            content_frame,
-            length=300,
-            mode='determinate'
-        )
+        self.progress = ttk.Progressbar(content_frame,
+                                        length=300,
+                                        mode='determinate')
         self.progress.pack(pady=30)
 
         # Démarrer l'animation
@@ -77,11 +73,13 @@ class SplashScreen:
         self.splash.destroy()
         self.parent.deiconify()
 
+
 class MainWindow:
     """
     Fenêtre principale de l'application.
     Gère l'interface utilisateur, la navigation et l'authentification.
     """
+
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("AL FOURQANE")
@@ -100,24 +98,30 @@ class MainWindow:
         style.configure("TFrame", background="#ffffff")
         style.configure("TLabel", background="#ffffff", foreground="#333333")
         style.configure("TButton", padding=8)
-        style.configure("Accent.TButton", background="#009688", foreground="white", padding=8)
+        style.configure("Accent.TButton",
+                        background="#009688",
+                        foreground="white",
+                        padding=8)
 
         # Configuration du style de la barre latérale
         style.configure("Sidebar.TFrame", background="#1e3a8a")  # Bleu foncé
-        style.configure("Menu.TButton", 
-                       background="#1e3a8a",
-                       foreground="white",
-                       padding=(20, 10, 20, 10),
-                       width=20,
-                       anchor="w")
-        
+        style.configure("Menu.TButton",
+                        background="#1e3a8a",
+                        foreground="white",
+                        padding=(20, 10, 20, 10),
+                        width=20,
+                        anchor="w")
+
         # Configuration du style de l'en-tête
-        style.configure("Header.TFrame", background="#1e3a8a")
-        style.configure("Header.TLabel", background="#1e3a8a", foreground="white")
-        style.configure("SidebarTitle.TLabel", 
-                       background="#1e3a8a",
-                       foreground="#60a5fa",  # Bleu clair pour le titre
-                       font=('Helvetica', 24, 'bold'))
+        style.configure("Header.TFrame", background="#27273A")
+        style.configure("Header.TLabel",
+                        background="#27273A",
+                        foreground="#FFF")
+        style.configure(
+            "SidebarTitle.TLabel",
+            background="#1e3a8a",
+            foreground="#60a5fa",  # Bleu clair pour le titre
+            font=('Helvetica', 24, 'bold'))
 
         self.setup_ui()
 
@@ -138,10 +142,10 @@ class MainWindow:
         # Titre de l'application dans la barre latérale avec icône
         title_frame = ttk.Frame(self.sidebar, style="Sidebar.TFrame")
         title_frame.pack(fill=tk.X, pady=(30, 20))
-        
+
         ttk.Label(title_frame,
-                 text="🐟 AL FOURQANE",
-                 style="SidebarTitle.TLabel").pack(pady=(0, 10))
+                  text="🐟 AL FOURQANE",
+                  style="SidebarTitle.TLabel").pack(pady=(0, 10))
 
         # Cadre des boutons du menu
         menu_frame = ttk.Frame(self.sidebar, style="Sidebar.TFrame")
@@ -165,10 +169,10 @@ class MainWindow:
         # Création des boutons du menu
         self.menu_buttons = []
         for text, icon, command in self.menu_items:
-            btn = ttk.Button(menu_frame, 
-                          text=f"{icon}  {text}", 
-                          command=command,
-                          style="Menu.TButton")
+            btn = ttk.Button(menu_frame,
+                             text=f"{icon}  {text}",
+                             command=command,
+                             style="Menu.TButton")
             btn.pack(pady=1, fill=tk.X)
             self.menu_buttons.append(btn)
             btn.configure(state="disabled")  # Désactivé jusqu'à la connexion
@@ -177,16 +181,20 @@ class MainWindow:
         logout_frame = ttk.Frame(self.sidebar, style="Sidebar.TFrame")
         logout_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=20)
 
-        self.logout_btn = ttk.Button(logout_frame, 
-                                  text="🚪  Déconnexion",
-                                  command=self.logout,
-                                  style="Menu.TButton")
+        self.logout_btn = ttk.Button(logout_frame,
+                                     text="🚪  Déconnexion",
+                                     command=self.logout,
+                                     style="Menu.TButton")
         self.logout_btn.pack(fill=tk.X)
         self.logout_btn.configure(state="disabled")
 
         # Zone de contenu principal
         self.content = ttk.Frame(self.main_container, style="TFrame")
-        self.content.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=30, pady=30)
+        self.content.pack(side=tk.RIGHT,
+                          fill=tk.BOTH,
+                          expand=True,
+                          padx=30,
+                          pady=30)
 
     def show_login(self):
         """Affiche la fenêtre de connexion"""
@@ -207,7 +215,8 @@ class MainWindow:
 
     def logout(self):
         """Gère la déconnexion de l'utilisateur"""
-        if messagebox.askyesno("Confirmation", "Voulez-vous vraiment vous déconnecter ?"):
+        if messagebox.askyesno("Confirmation",
+                               "Voulez-vous vraiment vous déconnecter ?"):
             self.current_user = None
             # Désactiver tous les boutons du menu
             for btn in self.menu_buttons:
