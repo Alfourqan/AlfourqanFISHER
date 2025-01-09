@@ -94,7 +94,7 @@ class MainWindow:
 
         # Configuration des couleurs et du thème
         self.root.configure(bg="#0f172a")
-        sv_ttk.set_theme("dark")
+        sv_ttk.set_theme("whitesmoke")
         style = ttk.Style()
         style.configure(".", background="#0f172a", foreground="#e2e8f0")
         style.configure("TFrame", background="#0f172a")
