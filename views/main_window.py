@@ -93,13 +93,14 @@ class MainWindow:
         self.root.withdraw()
 
         # Configuration des couleurs et du thème
-        self.root.configure(bg="#1a1a2e")
+        self.root.configure(bg="#0f172a")
         sv_ttk.set_theme("dark")
         style = ttk.Style()
-        style.configure(".", background="#1a1a2e", foreground="white")
-        style.configure("TFrame", background="#1a1a2e")
-        style.configure("TLabel", background="#1a1a2e", foreground="white")
-        style.configure("TButton", padding=5)
+        style.configure(".", background="#0f172a", foreground="#e2e8f0")
+        style.configure("TFrame", background="#0f172a")
+        style.configure("TLabel", background="#0f172a", foreground="#e2e8f0")
+        style.configure("TButton", padding=8)
+        style.configure("Accent.TButton", background="#3b82f6", foreground="white", padding=8)
 
         # Configuration du style de la barre latérale
         style.configure("Sidebar.TFrame", background="#16213e")

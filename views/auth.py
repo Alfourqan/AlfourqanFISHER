@@ -10,8 +10,8 @@ class LoginWindow:
         self.callback = callback
 
         # Configure window
-        self.window.configure(bg="#1a1a2e")
-        self.window.geometry("400x500")
+        self.window.configure(bg="#0f172a")
+        self.window.geometry("450x600")
 
         # Center window
         screen_width = self.window.winfo_screenwidth()

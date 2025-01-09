@@ -13,13 +13,13 @@ class HomeView:
 
         # Logo et titre
         title_frame = ttk.Frame(main_frame)
-        title_frame.pack(fill=tk.X, pady=20)
+        title_frame.pack(fill=tk.X, pady=30)
         
         ttk.Label(
             title_frame,
             text="🐟 AL FOURQANE",
-            font=('Helvetica', 32, 'bold'),
-            foreground='white'
+            font=('Helvetica', 38, 'bold'),
+            foreground='#3b82f6'
         ).pack(anchor=tk.CENTER)
         
         ttk.Label(
