@@ -57,7 +57,13 @@ class SalesView:
             self.tree.delete(item)
 
         for row in cursor.fetchall():
-            self.tree.insert('', 'end', values=row)
+            row_data = dict(row)
+            self.tree.insert('', 'end', values=(
+                row_data['id'],
+                row_data['date'],
+                row_data['name'],
+                row_data['total']
+            ))
 
     def filter_sales(self, *args):
         search_term = self.search_var.get().lower()

@@ -146,8 +146,9 @@ class StockAdjustmentDialog:
         product = cursor.fetchone()
         
         if product:
-            self.product_label.config(text=product[0])
-            self.current_stock_label.config(text=str(product[1]))
+            product_data = dict(product)
+            self.product_label.config(text=product_data['name'])
+            self.current_stock_label.config(text=str(product_data['stock']))
         else:
             messagebox.showerror("Erreur", "Produit non trouvé")
             self.top.destroy()
