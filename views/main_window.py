@@ -213,6 +213,7 @@ class MainWindow:
     def on_login_success(self, user):
         """Callback appelé après une connexion réussie"""
         self.current_user = user
+        
         # Activer tous les boutons du menu
         for btn in self.menu_buttons:
             btn.configure(state="normal")
