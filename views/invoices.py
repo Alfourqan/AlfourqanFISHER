@@ -15,7 +15,14 @@ class InvoicesView:
     def new_invoice(self):
         """Create a new invoice"""
         messagebox.showinfo("Info", "Redirection vers la page des ventes pour créer une nouvelle facture")
-        self.parent.master.show_sales()
+        # Navigate through widget hierarchy to reach MainWindow instance
+        main_window = self.parent
+        while not hasattr(main_window, 'show_sales'):
+            main_window = main_window.master
+            if main_window is None:
+                messagebox.showerror("Erreur", "Navigation impossible")
+                return
+        main_window.show_sales()
 
     def setup_ui(self):
         # Header frame
