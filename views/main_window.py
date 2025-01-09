@@ -87,6 +87,7 @@ class MainWindow:
         self.root.title("AL FOURQANE")
         self.root.geometry("1200x800")
         self.current_user = None
+        self.root.update_idletasks()
 
         # Cacher la fenêtre principale initialement
         self.root.withdraw()

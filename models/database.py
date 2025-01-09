@@ -30,6 +30,10 @@ class Database:
         if self._connection is None:
             self._connection = sqlite3.connect(self.db_file, check_same_thread=False)
             self._connection.execute("PRAGMA foreign_keys = ON")
+            self._connection.execute("PRAGMA journal_mode = WAL")
+            self._connection.execute("PRAGMA synchronous = NORMAL")
+            self._connection.execute("PRAGMA cache_size = -2000")
+            self._connection.execute("PRAGMA temp_store = MEMORY")
         return self._connection
 
     @property
