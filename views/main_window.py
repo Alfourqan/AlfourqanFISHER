@@ -114,7 +114,7 @@ class MainWindow:
 
         # Afficher l'écran de démarrage
         splash = SplashScreen(self.root)
-        self.root.after(3000, self.show_login)
+        self.root.after(1500, self.show_login)
 
     def setup_ui(self):
         """Configure l'interface utilisateur principale"""

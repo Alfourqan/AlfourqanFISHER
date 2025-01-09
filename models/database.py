@@ -31,9 +31,11 @@ class Database:
             self._connection = sqlite3.connect(self.db_file, check_same_thread=False)
             self._connection.execute("PRAGMA foreign_keys = ON")
             self._connection.execute("PRAGMA journal_mode = WAL")
-            self._connection.execute("PRAGMA synchronous = NORMAL")
-            self._connection.execute("PRAGMA cache_size = -2000")
+            self._connection.execute("PRAGMA synchronous = OFF")
+            self._connection.execute("PRAGMA cache_size = -4000")
             self._connection.execute("PRAGMA temp_store = MEMORY")
+            self._connection.execute("PRAGMA mmap_size = 30000000000")
+            self._connection.row_factory = sqlite3.Row
         return self._connection
 
     @property
