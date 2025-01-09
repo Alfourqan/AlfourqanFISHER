@@ -103,9 +103,9 @@ class MainWindow:
         style.configure("Accent.TButton", background="#009688", foreground="white", padding=8)
 
         # Configuration du style de la barre latérale
-        style.configure("Sidebar.TFrame", background="#2f3640")
+        style.configure("Sidebar.TFrame", background="#009688")
         style.configure("Menu.TButton", 
-                       background="#2f3640",
+                       background="#009688",
                        foreground="white",
                        padding=(20, 10, 20, 10),
                        width=20,
@@ -114,6 +114,10 @@ class MainWindow:
         # Configuration du style de l'en-tête
         style.configure("Header.TFrame", background="#009688")
         style.configure("Header.TLabel", background="#009688", foreground="white")
+        style.configure("SidebarTitle.TLabel", 
+                       background="#009688",
+                       foreground="white",
+                       font=('Helvetica', 20, 'bold'))
 
         self.setup_ui()
 
@@ -132,13 +136,9 @@ class MainWindow:
         self.sidebar.pack(side=tk.LEFT, fill=tk.Y)
 
         # Titre de l'application dans la barre latérale
-        # En-tête principal
-        header_frame = ttk.Frame(self.main_container, style="Header.TFrame")
-        header_frame.pack(side=tk.TOP, fill=tk.X)
-        ttk.Label(header_frame,
+        ttk.Label(self.sidebar,
                  text="AL FOURQANE",
-                 font=('Helvetica', 16, 'bold'),
-                 style="Header.TLabel").pack(anchor=tk.W, padx=20, pady=10)
+                 style="SidebarTitle.TLabel").pack(pady=20)
 
         # Cadre des boutons du menu
         menu_frame = ttk.Frame(self.sidebar, style="Sidebar.TFrame")
