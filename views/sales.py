@@ -102,6 +102,28 @@ class SaleDialog:
         self.top.transient(self.parent)  # Make dialog modal
         self.top.grab_set()  # Make dialog modal
 
+        # Payment method selection
+        payment_frame = ttk.LabelFrame(self.top, text="Méthode de paiement")
+        payment_frame.pack(fill=tk.X, padx=10, pady=5)
+        self.payment_var = tk.StringVar(value="cash")
+        ttk.Radiobutton(payment_frame, text="Espèces", variable=self.payment_var, 
+                       value="cash", command=self.payment_changed).pack(side=tk.LEFT, padx=5)
+        ttk.Radiobutton(payment_frame, text="Crédit", variable=self.payment_var,
+                       value="credit", command=self.payment_changed).pack(side=tk.LEFT, padx=5)
+        ttk.Radiobutton(payment_frame, text="Mobile", variable=self.payment_var,
+                       value="mobile", command=self.payment_changed).pack(side=tk.LEFT, padx=5)
+
+        # Discount frame
+        discount_frame = ttk.LabelFrame(self.top, text="Remise")
+        discount_frame.pack(fill=tk.X, padx=10, pady=5)
+        self.discount_type = tk.StringVar(value="percentage")
+        self.discount_value = tk.StringVar(value="0")
+        ttk.Radiobutton(discount_frame, text="%", variable=self.discount_type, 
+                       value="percentage").pack(side=tk.LEFT, padx=5)
+        ttk.Radiobutton(discount_frame, text="€", variable=self.discount_type,
+                       value="fixed").pack(side=tk.LEFT, padx=5)
+        ttk.Entry(discount_frame, textvariable=self.discount_value, width=10).pack(side=tk.LEFT, padx=5)
+
         # Window size and position
         window_width = 800
         window_height = 600
@@ -238,11 +260,36 @@ class SaleDialog:
         except Exception as e:
             messagebox.showerror("Erreur", f"Une erreur est survenue: {str(e)}")
 
+    def payment_changed(self):
+        # Enable/disable customer selection based on payment method
+        if self.payment_var.get() == "cash":
+            self.customer_combo.set("")
+            self.customer_combo.configure(state="disabled")
+        else:
+            self.customer_combo.configure(state="normal")
+
+    def calculate_final_total(self):
+        subtotal = float(self.total_var.get().replace('€', '').strip())
+        discount_val = float(self.discount_value.get() or 0)
+        
+        if self.discount_type.get() == "percentage":
+            discount = subtotal * (discount_val / 100)
+        else:
+            discount = discount_val
+
+        tax = (subtotal - discount) * 0.20  # 20% TVA
+        total = subtotal - discount + tax
+        return total, discount, tax
+
     def save(self):
         try:
-            customer = self.customer_var.get()
-            if not customer:
-                raise ValueError("Veuillez sélectionner un client")
+            payment_method = self.payment_var.get()
+            if payment_method != "cash":
+                customer = self.customer_var.get()
+                if not customer:
+                    raise ValueError("Client requis pour ce mode de paiement")
+            else:
+                customer = "Anonymous"
 
             if not self.products_tree.get_children():
                 raise ValueError("Veuillez ajouter des produits à la vente")
@@ -259,10 +306,15 @@ class SaleDialog:
             total = float(self.total_var.get().replace('€', '').strip())
 
             # Create sale
+            final_total, discount, tax = self.calculate_final_total()
+            barcode = f"INV-{datetime.now().strftime('%Y%m%d%H%M%S')}"
+            
             cursor.execute('''
-                INSERT INTO sales (date, customer_id, total)
-                VALUES (?, ?, ?)
-            ''', (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), customer_id, total))
+                INSERT INTO sales (date, customer_id, total, payment_method, discount, tax, barcode)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 
+                 customer_id, final_total, self.payment_var.get(), 
+                 discount, tax, barcode))
 
             sale_id = cursor.lastrowid
 

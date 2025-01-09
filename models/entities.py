@@ -36,6 +36,10 @@ class Sale:
     customer_id: int
     total: float
     items: List['SaleItem']
+    payment_method: str
+    discount: float = 0.0
+    tax: float = 0.0
+    barcode: str = None
 
 @dataclass
 class SaleItem:
