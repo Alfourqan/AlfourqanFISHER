@@ -102,12 +102,18 @@ class CashierView:
             self.products_tree.delete(item)
 
         for row in cursor.fetchall():
-            self.products_tree.insert('', 'end', values=row)
+            row_data = dict(row)
+            self.products_tree.insert('', 'end', values=(
+                row_data['id'],
+                row_data['name'],
+                row_data['price'],
+                row_data['stock']
+            ))
 
     def load_clients(self):
         cursor = self.db.conn.cursor()
         cursor.execute('SELECT name FROM customers')
-        clients = [row[0] for row in cursor.fetchall()]
+        clients = [dict(row)['name'] for row in cursor.fetchall()]
         self.client_combo['values'] = clients
 
     def filter_products(self, *args):
@@ -123,7 +129,13 @@ class CashierView:
             self.products_tree.delete(item)
 
         for row in cursor.fetchall():
-            self.products_tree.insert('', 'end', values=row)
+            row_data = dict(row)
+            self.products_tree.insert('', 'end', values=(
+                row_data['id'],
+                row_data['name'],
+                row_data['price'],
+                row_data['stock']
+            ))
 
     def add_to_cart(self, event):
         selection = self.products_tree.selection()
