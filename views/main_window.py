@@ -103,21 +103,21 @@ class MainWindow:
         style.configure("Accent.TButton", background="#009688", foreground="white", padding=8)
 
         # Configuration du style de la barre latérale
-        style.configure("Sidebar.TFrame", background="#009688")
+        style.configure("Sidebar.TFrame", background="#1e3a8a")  # Bleu foncé
         style.configure("Menu.TButton", 
-                       background="#009688",
+                       background="#1e3a8a",
                        foreground="white",
                        padding=(20, 10, 20, 10),
                        width=20,
                        anchor="w")
         
         # Configuration du style de l'en-tête
-        style.configure("Header.TFrame", background="#009688")
-        style.configure("Header.TLabel", background="#009688", foreground="white")
+        style.configure("Header.TFrame", background="#1e3a8a")
+        style.configure("Header.TLabel", background="#1e3a8a", foreground="white")
         style.configure("SidebarTitle.TLabel", 
-                       background="#009688",
-                       foreground="white",
-                       font=('Helvetica', 20, 'bold'))
+                       background="#1e3a8a",
+                       foreground="#60a5fa",  # Bleu clair pour le titre
+                       font=('Helvetica', 24, 'bold'))
 
         self.setup_ui()
 
@@ -135,10 +135,13 @@ class MainWindow:
         self.sidebar = ttk.Frame(self.main_container, style="Sidebar.TFrame")
         self.sidebar.pack(side=tk.LEFT, fill=tk.Y)
 
-        # Titre de l'application dans la barre latérale
-        ttk.Label(self.sidebar,
-                 text="AL FOURQANE",
-                 style="SidebarTitle.TLabel").pack(pady=20)
+        # Titre de l'application dans la barre latérale avec icône
+        title_frame = ttk.Frame(self.sidebar, style="Sidebar.TFrame")
+        title_frame.pack(fill=tk.X, pady=(30, 20))
+        
+        ttk.Label(title_frame,
+                 text="🐟 AL FOURQANE",
+                 style="SidebarTitle.TLabel").pack(pady=(0, 10))
 
         # Cadre des boutons du menu
         menu_frame = ttk.Frame(self.sidebar, style="Sidebar.TFrame")
