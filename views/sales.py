@@ -201,8 +201,16 @@ class SaleDialog:
         # Buttons frame
         btn_frame = ttk.Frame(main_frame)
         btn_frame.pack(fill=tk.X, pady=10)
-        ttk.Button(btn_frame, text="Sauvegarder", command=self.save).pack(side=tk.RIGHT, padx=5)
-        ttk.Button(btn_frame, text="Annuler", command=self.top.destroy).pack(side=tk.RIGHT)
+        
+        validate_btn = ttk.Button(btn_frame, text="Valider", command=self.save, style='Accent.TButton')
+        validate_btn.pack(side=tk.RIGHT, padx=5)
+        
+        cancel_btn = ttk.Button(btn_frame, text="Annuler", command=self.top.destroy)
+        cancel_btn.pack(side=tk.RIGHT, padx=5)
+        
+        # Bind keyboard shortcuts
+        self.top.bind('<Return>', lambda e: self.save())
+        self.top.bind('<Escape>', lambda e: self.top.destroy())
 
     def load_customers(self):
         cursor = self.db.conn.cursor()
