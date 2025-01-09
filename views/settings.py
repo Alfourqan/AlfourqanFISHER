@@ -123,7 +123,7 @@ class SettingsView:
 
             self.settings = settings
             messagebox.showinfo("Succès", "Paramètres sauvegardés avec succès")
-            
+
         except Exception as e:
             messagebox.showerror("Erreur", f"Erreur lors de la sauvegarde des paramètres: {str(e)}")
 

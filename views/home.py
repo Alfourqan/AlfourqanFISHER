@@ -14,14 +14,14 @@ class HomeView:
         # Logo et titre
         title_frame = ttk.Frame(main_frame)
         title_frame.pack(fill=tk.X, pady=30)
-        
+
         ttk.Label(
             title_frame,
             text="🐟 AL FOURQANE",
             font=('Helvetica', 38, 'bold'),
             foreground='#3b82f6'
         ).pack(anchor=tk.CENTER)
-        
+
         ttk.Label(
             title_frame,
             text="Gestion de Poissonnerie",
@@ -32,17 +32,17 @@ class HomeView:
         # Description
         desc_frame = ttk.Frame(main_frame)
         desc_frame.pack(fill=tk.X, pady=30)
-        
+
         description = """
         Bienvenue dans votre application de gestion de poissonnerie.
-        
+
         Cette application vous permet de :
         • Gérer votre inventaire de produits
         • Suivre vos ventes et factures
         • Gérer vos clients et fournisseurs
         • Générer des rapports détaillés
         """
-        
+
         ttk.Label(
             desc_frame,
             text=description,
@@ -54,7 +54,7 @@ class HomeView:
         # Informations de contact
         contact_frame = ttk.Frame(main_frame)
         contact_frame.pack(fill=tk.X, pady=20)
-        
+
         ttk.Label(
             contact_frame,
             text="Pour toute assistance, contactez le support technique",

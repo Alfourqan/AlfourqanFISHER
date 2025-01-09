@@ -36,12 +36,12 @@ class CashierView:
         self.products_tree.heading('Nom', text='Nom')
         self.products_tree.heading('Prix', text='Prix')
         self.products_tree.heading('Stock', text='Stock')
-        
+
         self.products_tree.column('ID', width=50)
         self.products_tree.column('Nom', width=200)
         self.products_tree.column('Prix', width=100)
         self.products_tree.column('Stock', width=100)
-        
+
         self.products_tree.pack(fill=tk.BOTH, expand=True)
         self.products_tree.bind('<Double-1>', self.add_to_cart)
 
@@ -61,7 +61,7 @@ class CashierView:
         # Cart
         cart_frame = ttk.LabelFrame(right_panel, text="Panier", padding=5)
         cart_frame.pack(fill=tk.BOTH, expand=True)
-        
+
         self.cart_tree = ttk.Treeview(cart_frame, 
                                      columns=('Produit', 'Qté', 'Prix', 'Total'),
                                      show='headings')
@@ -69,12 +69,12 @@ class CashierView:
         self.cart_tree.heading('Qté', text='Qté')
         self.cart_tree.heading('Prix', text='Prix')
         self.cart_tree.heading('Total', text='Total')
-        
+
         self.cart_tree.column('Produit', width=150)
         self.cart_tree.column('Qté', width=70)
         self.cart_tree.column('Prix', width=70)
         self.cart_tree.column('Total', width=70)
-        
+
         self.cart_tree.pack(fill=tk.BOTH, expand=True)
         self.cart_tree.bind('<Double-1>', self.remove_from_cart)
 
@@ -97,10 +97,10 @@ class CashierView:
     def load_products(self):
         cursor = self.db.conn.cursor()
         cursor.execute('SELECT id, name, price, stock FROM products WHERE stock > 0')
-        
+
         for item in self.products_tree.get_children():
             self.products_tree.delete(item)
-            
+
         for row in cursor.fetchall():
             self.products_tree.insert('', 'end', values=row)
 
@@ -118,10 +118,10 @@ class CashierView:
             FROM products 
             WHERE LOWER(name) LIKE ? AND stock > 0
         ''', (f'%{search_term}%',))
-        
+
         for item in self.products_tree.get_children():
             self.products_tree.delete(item)
-            
+
         for row in cursor.fetchall():
             self.products_tree.insert('', 'end', values=row)
 
@@ -140,11 +140,11 @@ class CashierView:
         # Ask for quantity
         dialog = QuantityDialog(self.parent, available_stock)
         self.parent.wait_window(dialog.top)
-        
+
         if dialog.quantity is not None:
             quantity = dialog.quantity
             total = price * quantity
-            
+
             # Add to cart
             self.cart_tree.insert('', 'end', values=(product_name, quantity, price, total))
             self.cart.append({
@@ -152,7 +152,7 @@ class CashierView:
                 'quantity': quantity,
                 'price': price
             })
-            
+
             # Update total
             self.total += total
             self.total_label.config(text=f"{self.total:.2f} €")
@@ -165,10 +165,10 @@ class CashierView:
         if messagebox.askyesno("Confirmation", "Voulez-vous retirer cet article du panier ?"):
             item = self.cart_tree.item(selection[0])
             total_item = item['values'][3]
-            
+
             self.total -= total_item
             self.total_label.config(text=f"{self.total:.2f} €")
-            
+
             self.cart_tree.delete(selection[0])
             # Remove from cart list - approximate match based on position
             if self.cart:
@@ -185,40 +185,40 @@ class CashierView:
 
         try:
             cursor = self.db.conn.cursor()
-            
+
             # Get client ID
             cursor.execute('SELECT id FROM customers WHERE name = ?', (self.client_var.get(),))
             customer_id = cursor.fetchone()[0]
-            
+
             # Create sale
             cursor.execute('''
                 INSERT INTO sales (date, customer_id, total)
                 VALUES (?, ?, ?)
             ''', (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), customer_id, self.total))
-            
+
             sale_id = cursor.lastrowid
-            
+
             # Add sale items and update stock
             for item in self.cart:
                 cursor.execute('''
                     INSERT INTO sale_items (sale_id, product_id, quantity, price)
                     VALUES (?, ?, ?, ?)
                 ''', (sale_id, item['product_id'], item['quantity'], item['price']))
-                
+
                 cursor.execute('''
                     UPDATE products 
                     SET stock = stock - ? 
                     WHERE id = ?
                 ''', (item['quantity'], item['product_id']))
-            
+
             self.db.conn.commit()
             messagebox.showinfo("Succès", "Vente enregistrée avec succès")
-            
+
             # Clear cart
             self.clear_cart()
             # Reload products
             self.load_products()
-            
+
         except Exception as e:
             messagebox.showerror("Erreur", str(e))
             self.db.conn.rollback()
