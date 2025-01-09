@@ -104,9 +104,9 @@ class MainWindow:
                         padding=8)
 
         # Configuration du style de la barre latérale
-        style.configure("Sidebar.TFrame", background="#27273A")
+        style.configure("Sidebar.TFrame", background="#33334C")
         style.configure("Menu.TButton",
-                        background="#27273A",
+                        background="#33334C",
                         foreground="white",
                         padding=(20, 10, 20, 10),
                         width=20,
@@ -120,7 +120,7 @@ class MainWindow:
         style.configure(
             "SidebarTitle.TLabel",
             background="#27273A",
-            foreground="#60a5fa",  # Bleu clair pour le titre
+            foreground="white",
             font=('Helvetica', 24, 'bold'))
 
         self.setup_ui()
