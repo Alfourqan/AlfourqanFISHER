@@ -104,9 +104,9 @@ class MainWindow:
                         padding=8)
 
         # Configuration du style de la barre latérale
-        style.configure("Sidebar.TFrame", background="#1e3a8a")  # Bleu foncé
+        style.configure("Sidebar.TFrame", background="#27273A")
         style.configure("Menu.TButton",
-                        background="#1e3a8a",
+                        background="#27273A",
                         foreground="white",
                         padding=(20, 10, 20, 10),
                         width=20,
@@ -119,7 +119,7 @@ class MainWindow:
                         foreground="#FFF")
         style.configure(
             "SidebarTitle.TLabel",
-            background="#1e3a8a",
+            background="#27273A",
             foreground="#60a5fa",  # Bleu clair pour le titre
             font=('Helvetica', 24, 'bold'))
 
