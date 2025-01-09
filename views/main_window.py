@@ -111,9 +111,9 @@ class MainWindow:
                         padding=(20, 10, 20, 10),
                         width=20,
                         anchor="w")
-        style.configure("TitleBar.TFrame", background="#27273A")
+        style.configure("TitleBar.TFrame", background="#008789")
         style.configure("MenuTitle.TLabel", 
-                       background="#27273A",
+                       background="008789",
                        foreground="white",
                        font=('Helvetica', 16, 'bold'))
 
