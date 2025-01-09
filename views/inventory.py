@@ -145,8 +145,12 @@ class StockAdjustmentDialog:
         cursor.execute('SELECT name, stock FROM products WHERE id = ?', (self.product_id,))
         product = cursor.fetchone()
         
-        self.product_label.config(text=product[0])
-        self.current_stock_label.config(text=str(product[1]))
+        if product:
+            self.product_label.config(text=product[0])
+            self.current_stock_label.config(text=str(product[1]))
+        else:
+            messagebox.showerror("Erreur", "Produit non trouvé")
+            self.top.destroy()
 
     def save(self):
         try:
