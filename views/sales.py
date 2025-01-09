@@ -124,6 +124,8 @@ class InvoiceGenerationDialog:
             WHERE s.id = ?
         ''', (self.sale_id,))
         sale = cursor.fetchone()
+        if sale:
+            sale = dict(sale)
         
         if not sale:
             messagebox.showerror("Erreur", "Vente non trouvée")
