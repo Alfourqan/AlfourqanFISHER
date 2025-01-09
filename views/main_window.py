@@ -93,23 +93,27 @@ class MainWindow:
         self.root.withdraw()
 
         # Configuration des couleurs et du thème
-        self.root.configure(bg="#0f172a")
-        sv_ttk.set_theme("dark")
+        self.root.configure(bg="#ffffff")
+        sv_ttk.set_theme("light")
         style = ttk.Style()
-        style.configure(".", background="#0f172a", foreground="#e2e8f0")
-        style.configure("TFrame", background="#0f172a")
-        style.configure("TLabel", background="#0f172a", foreground="#e2e8f0")
+        style.configure(".", background="#ffffff", foreground="#333333")
+        style.configure("TFrame", background="#ffffff")
+        style.configure("TLabel", background="#ffffff", foreground="#333333")
         style.configure("TButton", padding=8)
-        style.configure("Accent.TButton", background="#3b82f6", foreground="white", padding=8)
+        style.configure("Accent.TButton", background="#009688", foreground="white", padding=8)
 
         # Configuration du style de la barre latérale
-        style.configure("Sidebar.TFrame", background="#16213e")
+        style.configure("Sidebar.TFrame", background="#2f3640")
         style.configure("Menu.TButton", 
-                       background="#16213e",
+                       background="#2f3640",
                        foreground="white",
                        padding=(20, 10, 20, 10),
                        width=20,
                        anchor="w")
+        
+        # Configuration du style de l'en-tête
+        style.configure("Header.TFrame", background="#009688")
+        style.configure("Header.TLabel", background="#009688", foreground="white")
 
         self.setup_ui()
 
@@ -128,13 +132,13 @@ class MainWindow:
         self.sidebar.pack(side=tk.LEFT, fill=tk.Y)
 
         # Titre de l'application dans la barre latérale
-        title_frame = ttk.Frame(self.sidebar, style="Sidebar.TFrame")
-        title_frame.pack(fill=tk.X, pady=(20, 30))
-        ttk.Label(title_frame, 
+        # En-tête principal
+        header_frame = ttk.Frame(self.main_container, style="Header.TFrame")
+        header_frame.pack(side=tk.TOP, fill=tk.X)
+        ttk.Label(header_frame,
                  text="AL FOURQANE",
                  font=('Helvetica', 16, 'bold'),
-                 foreground="white",
-                 background="#16213e").pack(anchor=tk.W, padx=20)
+                 style="Header.TLabel").pack(anchor=tk.W, padx=20, pady=10)
 
         # Cadre des boutons du menu
         menu_frame = ttk.Frame(self.sidebar, style="Sidebar.TFrame")
