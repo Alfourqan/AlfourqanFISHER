@@ -11,6 +11,11 @@ class InvoicesView:
         self.pdf_gen = PDFGenerator()
         self.setup_ui()
         self.load_invoices()
+        
+    def new_invoice(self):
+        """Create a new invoice"""
+        messagebox.showinfo("Info", "Redirection vers la page des ventes pour créer une nouvelle facture")
+        self.parent.master.show_sales()
 
     def setup_ui(self):
         # Header frame
