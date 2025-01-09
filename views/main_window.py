@@ -103,7 +103,7 @@ class MainWindow:
                         foreground="white",
                         padding=8)
 
-        # Configuration du style de la barre latérale
+        # Configuration du style de la barre latérale et titre
         style.configure("Sidebar.TFrame", background="#16213e")
         style.configure("Menu.TButton",
                         background="#16213e",
@@ -111,6 +111,11 @@ class MainWindow:
                         padding=(20, 10, 20, 10),
                         width=20,
                         anchor="w")
+        style.configure("TitleBar.TFrame", background="#27273A")
+        style.configure("MenuTitle.TLabel", 
+                       background="#27273A",
+                       foreground="white",
+                       font=('Helvetica', 16, 'bold'))
 
         self.setup_ui()
 
@@ -178,13 +183,24 @@ class MainWindow:
         self.logout_btn.pack(fill=tk.X)
         self.logout_btn.configure(state="disabled")
 
+        # Conteneur droit pour le titre et le contenu
+        right_container = ttk.Frame(self.main_container, style="TFrame")
+        right_container.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        
+        # Barre de titre horizontale
+        self.title_bar = ttk.Frame(right_container, style="TitleBar.TFrame")
+        self.title_bar.pack(fill=tk.X, padx=0, pady=0)
+        
+        # Label pour le titre du menu
+        self.menu_title = ttk.Label(self.title_bar, 
+                                  text="Accueil",
+                                  font=('Helvetica', 16, 'bold'),
+                                  style="MenuTitle.TLabel")
+        self.menu_title.pack(side=tk.LEFT, padx=20, pady=15)
+        
         # Zone de contenu principal
-        self.content = ttk.Frame(self.main_container, style="TFrame")
-        self.content.pack(side=tk.RIGHT,
-                          fill=tk.BOTH,
-                          expand=True,
-                          padx=30,
-                          pady=30)
+        self.content = ttk.Frame(right_container, style="TFrame")
+        self.content.pack(fill=tk.BOTH, expand=True, padx=30, pady=30)
 
     def show_login(self):
         """Affiche la fenêtre de connexion"""
@@ -217,6 +233,7 @@ class MainWindow:
     # Méthodes de navigation pour chaque section
     def show_home(self):
         """Affiche la page d'accueil"""
+        self.menu_title.configure(text="Accueil")
         self.clear_content()
         home.HomeView(self.content)
 
