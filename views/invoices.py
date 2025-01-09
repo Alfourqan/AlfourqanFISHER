@@ -11,7 +11,7 @@ class InvoicesView:
         self.pdf_gen = PDFGenerator()
         self.setup_ui()
         self.load_invoices()
-        
+
     def new_invoice(self):
         """Create a new invoice"""
         messagebox.showinfo("Info", "Redirection vers la page des ventes pour créer une nouvelle facture")
@@ -28,7 +28,7 @@ class InvoicesView:
         # Header frame
         header_frame = ttk.Frame(self.parent)
         header_frame.pack(fill=tk.X, padx=10, pady=10)
-        
+
         # Title with bigger font and accent color
         ttk.Label(header_frame, text="Gestion des Factures", 
                  font=('Helvetica', 24, 'bold'), 
@@ -37,11 +37,11 @@ class InvoicesView:
         # Buttons frame on right
         buttons_frame = ttk.Frame(header_frame)
         buttons_frame.pack(side=tk.RIGHT)
-        
+
         # Action buttons with custom style
         style = ttk.Style()
         style.configure("Action.TButton", padding=8, font=('Helvetica', 10))
-        
+
         ttk.Button(buttons_frame, text="Imprimer", style="Action.TButton",
                   command=self.generate_pdf).pack(side=tk.LEFT, padx=5)
         ttk.Button(buttons_frame, text="Nouvelle Facture", style="Action.TButton",
@@ -62,7 +62,7 @@ class InvoicesView:
         # Invoices table with improved styling
         style.configure("Treeview", rowheight=30, font=('Helvetica', 10))
         style.configure("Treeview.Heading", font=('Helvetica', 11, 'bold'))
-        
+
         self.tree = ttk.Treeview(self.parent,
                                 columns=('N° Facture', 'Date', 'Client', 'Total', 'Statut'),
                                 show='headings',
@@ -72,13 +72,13 @@ class InvoicesView:
         self.tree.heading('Client', text='Client')
         self.tree.heading('Total', text='Total')
         self.tree.heading('Statut', text='Statut')
-        
+
         self.tree.column('N° Facture', width=150)
         self.tree.column('Date', width=120)
         self.tree.column('Client', width=250)
         self.tree.column('Total', width=120)
         self.tree.column('Statut', width=100)
-        
+
         self.tree.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
         # Actions frame
@@ -96,12 +96,16 @@ class InvoicesView:
             LEFT JOIN customers c ON s.customer_id = c.id
             ORDER BY s.date DESC
         ''')
-        
+
         for item in self.tree.get_children():
             self.tree.delete(item)
-            
+
         for row in cursor.fetchall():
-            self.tree.insert('', 'end', values=row)
+            try:
+                row_data = dict(row)
+                self.tree.insert('', 'end', values=(row_data['id'], row_data['date'], row_data['name'], row_data['total'], row_data['status']))
+            except (KeyError, TypeError) as e:
+                print(f"Error inserting row: {e}, Row data: {row}")  #Handle missing keys gracefully
 
     def filter_invoices(self, *args):
         search_term = self.search_var.get().lower()
@@ -114,10 +118,10 @@ class InvoicesView:
             WHERE LOWER(c.name) LIKE ?
             ORDER BY s.date DESC
         ''', (f'%{search_term}%',))
-        
+
         for item in self.tree.get_children():
             self.tree.delete(item)
-            
+
         for row in cursor.fetchall():
             self.tree.insert('', 'end', values=row)
 
@@ -128,7 +132,7 @@ class InvoicesView:
             return
 
         sale_id = self.tree.item(selection[0])['values'][0]
-        
+
         try:
             # Get sale data
             cursor = self.db.conn.cursor()
@@ -139,7 +143,7 @@ class InvoicesView:
                 WHERE s.id = ?
             ''', (sale_id,))
             sale = cursor.fetchone()
-            
+
             # Get sale items
             cursor.execute('''
                 SELECT p.name as product_name, si.quantity, si.price
@@ -148,7 +152,7 @@ class InvoicesView:
                 WHERE si.sale_id = ?
             ''', (sale_id,))
             items = cursor.fetchall()
-            
+
             sale_data = {
                 'id': sale[0],
                 'date': sale[1],
@@ -162,13 +166,13 @@ class InvoicesView:
                     } for item in items
                 ]
             }
-            
+
             # Generate PDF
             filename = f"facture_{sale_id}.pdf"
             self.pdf_gen.generate_invoice(sale_data, filename)
-            
+
             messagebox.showinfo("Succès", f"La facture a été générée: {filename}")
-            
+
         except Exception as e:
             messagebox.showerror("Erreur", str(e))
 
