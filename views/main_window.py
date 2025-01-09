@@ -239,51 +239,61 @@ class MainWindow:
 
     def show_products(self):
         """Affiche la gestion des produits"""
+        self.menu_title.configure(text="Produits")
         self.clear_content()
         products.ProductsView(self.content)
 
     def show_sales(self):
         """Affiche la gestion des ventes"""
+        self.menu_title.configure(text="Ventes")
         self.clear_content()
         sales.SalesView(self.content)
 
     def show_customers(self):
         """Affiche la gestion des clients"""
+        self.menu_title.configure(text="Clients")
         self.clear_content()
         customers.CustomersView(self.content)
 
     def show_invoices(self):
         """Affiche la gestion des factures"""
+        self.menu_title.configure(text="Factures")
         self.clear_content()
         invoices.InvoicesView(self.content)
 
     def show_suppliers(self):
         """Affiche la gestion des fournisseurs"""
+        self.menu_title.configure(text="Fournisseurs")
         self.clear_content()
         suppliers.SuppliersView(self.content)
 
     def show_categories(self):
         """Affiche la gestion des catégories"""
+        self.menu_title.configure(text="Catégories")
         self.clear_content()
         categories.CategoriesView(self.content)
 
     def show_inventory(self):
         """Affiche la gestion de l'inventaire"""
+        self.menu_title.configure(text="Inventaire")
         self.clear_content()
         inventory.InventoryView(self.content)
 
     def show_cashier(self):
         """Affiche la caisse"""
+        self.menu_title.configure(text="Caisse")
         self.clear_content()
         cashier.CashierView(self.content)
 
     def show_reports(self):
         """Affiche les rapports"""
+        self.menu_title.configure(text="Rapports")
         self.clear_content()
         reports.ReportsView(self.content)
 
     def show_settings(self):
         """Affiche les paramètres"""
+        self.menu_title.configure(text="Réglages")
         self.clear_content()
         settings.SettingsView(self.content)
 
