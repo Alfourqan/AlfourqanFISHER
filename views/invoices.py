@@ -13,34 +13,59 @@ class InvoicesView:
         self.load_invoices()
 
     def setup_ui(self):
-        # Title
-        title_frame = ttk.Frame(self.parent)
-        title_frame.pack(fill=tk.X, padx=5, pady=5)
-        ttk.Label(title_frame, text="Gestion des Factures", font=('Helvetica', 16, 'bold')).pack(side=tk.LEFT)
+        # Header frame
+        header_frame = ttk.Frame(self.parent)
+        header_frame.pack(fill=tk.X, padx=10, pady=10)
+        
+        # Title with bigger font and accent color
+        ttk.Label(header_frame, text="Gestion des Factures", 
+                 font=('Helvetica', 24, 'bold'), 
+                 foreground='#3b82f6').pack(side=tk.LEFT)
 
-        # Search frame
+        # Buttons frame on right
+        buttons_frame = ttk.Frame(header_frame)
+        buttons_frame.pack(side=tk.RIGHT)
+        
+        # Action buttons with custom style
+        style = ttk.Style()
+        style.configure("Action.TButton", padding=8, font=('Helvetica', 10))
+        
+        ttk.Button(buttons_frame, text="Imprimer", style="Action.TButton",
+                  command=self.generate_pdf).pack(side=tk.LEFT, padx=5)
+        ttk.Button(buttons_frame, text="Nouvelle Facture", style="Action.TButton",
+                  command=self.new_invoice).pack(side=tk.LEFT, padx=5)
+        ttk.Button(buttons_frame, text="Actualiser", style="Action.TButton",
+                  command=self.load_invoices).pack(side=tk.LEFT, padx=5)
+
+        # Search frame with better styling
         search_frame = ttk.Frame(self.parent)
-        search_frame.pack(fill=tk.X, padx=5, pady=5)
-        ttk.Label(search_frame, text="Rechercher:").pack(side=tk.LEFT)
+        search_frame.pack(fill=tk.X, padx=10, pady=(0, 10))
+        ttk.Label(search_frame, text="Rechercher:", 
+                 font=('Helvetica', 11)).pack(side=tk.LEFT)
         self.search_var = tk.StringVar()
         self.search_var.trace('w', self.filter_invoices)
-        ttk.Entry(search_frame, textvariable=self.search_var).pack(side=tk.LEFT, padx=5)
+        ttk.Entry(search_frame, textvariable=self.search_var, 
+                 width=40).pack(side=tk.LEFT, padx=10)
 
-        # Invoices table
-        self.tree = ttk.Treeview(self.parent, 
-                                columns=('ID', 'Date', 'Client', 'Total', 'Status'),
-                                show='headings')
-        self.tree.heading('ID', text='ID')
+        # Invoices table with improved styling
+        style.configure("Treeview", rowheight=30, font=('Helvetica', 10))
+        style.configure("Treeview.Heading", font=('Helvetica', 11, 'bold'))
+        
+        self.tree = ttk.Treeview(self.parent,
+                                columns=('N° Facture', 'Date', 'Client', 'Total', 'Statut'),
+                                show='headings',
+                                style="Treeview")
+        self.tree.heading('N° Facture', text='N° Facture')
         self.tree.heading('Date', text='Date')
         self.tree.heading('Client', text='Client')
         self.tree.heading('Total', text='Total')
-        self.tree.heading('Status', text='Status')
+        self.tree.heading('Statut', text='Statut')
         
-        self.tree.column('ID', width=50)
-        self.tree.column('Date', width=150)
-        self.tree.column('Client', width=200)
-        self.tree.column('Total', width=100)
-        self.tree.column('Status', width=100)
+        self.tree.column('N° Facture', width=150)
+        self.tree.column('Date', width=120)
+        self.tree.column('Client', width=250)
+        self.tree.column('Total', width=120)
+        self.tree.column('Statut', width=100)
         
         self.tree.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
