@@ -218,7 +218,10 @@ class MainWindow:
         for btn in self.menu_buttons:
             btn.configure(state="normal")
         self.logout_btn.configure(state="normal")
-        self.show_home()
+        
+        # Afficher la page d'accueil après un court délai pour assurer l'initialisation
+        self.root.after(100, self.show_home)
+        self.root.deiconify()
 
     def logout(self):
         """Gère la déconnexion de l'utilisateur"""
