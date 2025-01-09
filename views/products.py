@@ -15,7 +15,7 @@ class ProductsView:
         title_frame = ttk.Frame(self.parent)
         title_frame.pack(fill=tk.X, padx=5, pady=5)
         ttk.Label(title_frame, text="Gestion des Produits", font=('Helvetica', 16, 'bold')).pack(side=tk.LEFT)
-        
+
         # Add button
         ttk.Button(title_frame, text="+ Nouveau Produit", command=self.add_product).pack(side=tk.RIGHT)
 
@@ -35,13 +35,13 @@ class ProductsView:
         self.tree.heading('Prix', text='Prix')
         self.tree.heading('Stock', text='Stock')
         self.tree.heading('Catégorie', text='Catégorie')
-        
+
         self.tree.column('ID', width=50)
         self.tree.column('Nom', width=200)
         self.tree.column('Prix', width=100)
         self.tree.column('Stock', width=100)
         self.tree.column('Catégorie', width=150)
-        
+
         self.tree.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
     def load_products(self):
@@ -51,12 +51,19 @@ class ProductsView:
             FROM products p 
             LEFT JOIN categories c ON p.category_id = c.id
         ''')
-        
+
         for item in self.tree.get_children():
             self.tree.delete(item)
-            
+
         for row in cursor.fetchall():
-            self.tree.insert('', 'end', values=row)
+            row_data = dict(row)
+            self.tree.insert('', 'end', values=(
+                row_data['id'],
+                row_data['name'],
+                row_data['price'],
+                row_data['stock'],
+                row_data.get('name', '')  # Category name
+            ))
 
     def filter_products(self, *args):
         search_term = self.search_var.get().lower()
@@ -67,12 +74,19 @@ class ProductsView:
             LEFT JOIN categories c ON p.category_id = c.id
             WHERE LOWER(p.name) LIKE ?
         ''', (f'%{search_term}%',))
-        
+
         for item in self.tree.get_children():
             self.tree.delete(item)
-            
+
         for row in cursor.fetchall():
-            self.tree.insert('', 'end', values=row)
+            row_data = dict(row)
+            self.tree.insert('', 'end', values=(
+                row_data['id'],
+                row_data['name'],
+                row_data['price'],
+                row_data['stock'],
+                row_data.get('name', '')  # Category name
+            ))
 
     def add_product(self):
         dialog = ProductDialog(self.parent, self.db)
@@ -158,10 +172,10 @@ class ProductDialog:
                 INSERT INTO products (name, price, stock, category_id)
                 VALUES (?, ?, ?, ?)
             ''', (name, price, stock, category_id))
-            
+
             self.db.conn.commit()
             self.top.destroy()
-            
+
         except ValueError:
             messagebox.showerror("Erreur", "Veuillez entrer des valeurs valides")
         except Exception as e:

@@ -37,7 +37,11 @@ class CategoriesView:
             self.tree.delete(item)
             
         for row in cursor.fetchall():
-            self.tree.insert('', 'end', values=row)
+            row_data = dict(row)
+            self.tree.insert('', 'end', values=(
+                row_data['id'],
+                row_data['name']
+            ))
 
     def add_category(self):
         dialog = CategoryDialog(self.parent, self.db)

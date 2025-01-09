@@ -30,37 +30,49 @@ class CustomersView:
         self.tree.heading('Nom', text='Nom')
         self.tree.heading('Téléphone', text='Téléphone')
         self.tree.heading('Adresse', text='Adresse')
-        
+
         self.tree.column('ID', width=50)
         self.tree.column('Nom', width=200)
         self.tree.column('Téléphone', width=150)
         self.tree.column('Adresse', width=300)
-        
+
         self.tree.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
-        
+
         # Bind double click for editing
         self.tree.bind('<Double-1>', self.edit_customer)
 
     def load_customers(self):
         cursor = self.db.conn.cursor()
         cursor.execute('SELECT * FROM customers')
-        
+
         for item in self.tree.get_children():
             self.tree.delete(item)
-            
+
         for row in cursor.fetchall():
-            self.tree.insert('', 'end', values=row)
+            row_data = dict(row)
+            self.tree.insert('', 'end', values=(
+                row_data['id'],
+                row_data['name'],
+                row_data['phone'],
+                row_data['address']
+            ))
 
     def filter_customers(self, *args):
         search_term = self.search_var.get().lower()
         cursor = self.db.conn.cursor()
         cursor.execute('SELECT * FROM customers WHERE LOWER(name) LIKE ?', (f'%{search_term}%',))
-        
+
         for item in self.tree.get_children():
             self.tree.delete(item)
-            
+
         for row in cursor.fetchall():
-            self.tree.insert('', 'end', values=row)
+            row_data = dict(row)
+            self.tree.insert('', 'end', values=(
+                row_data['id'],
+                row_data['name'],
+                row_data['phone'],
+                row_data['address']
+            ))
 
     def add_customer(self):
         dialog = CustomerDialog(self.parent, self.db)
@@ -85,7 +97,7 @@ class CustomerDialog:
 
     def setup_ui(self):
         self.top.title("Nouveau Client" if not self.customer_id else "Modifier Client")
-        
+
         # Name
         ttk.Label(self.top, text="Nom:").grid(row=0, column=0, padx=5, pady=5)
         self.name_var = tk.StringVar()
@@ -113,7 +125,7 @@ class CustomerDialog:
         cursor = self.db.conn.cursor()
         cursor.execute('SELECT * FROM customers WHERE id = ?', (self.customer_id,))
         customer = cursor.fetchone()
-        
+
         self.name_var.set(customer[1])
         self.phone_var.set(customer[2])
         self.address_var.set(customer[3])
@@ -136,10 +148,10 @@ class CustomerDialog:
                     INSERT INTO customers (name, phone, address)
                     VALUES (?, ?, ?)
                 ''', (name, phone, address))
-            
+
             self.db.conn.commit()
             self.top.destroy()
-            
+
         except Exception as e:
             messagebox.showerror("Erreur", str(e))
 
