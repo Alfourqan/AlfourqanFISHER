@@ -125,10 +125,11 @@ class CustomerDialog:
         cursor = self.db.conn.cursor()
         cursor.execute('SELECT * FROM customers WHERE id = ?', (self.customer_id,))
         customer = cursor.fetchone()
+        customer_data = dict(customer)
 
-        self.name_var.set(customer[1])
-        self.phone_var.set(customer[2])
-        self.address_var.set(customer[3])
+        self.name_var.set(customer_data['name'])
+        self.phone_var.set(customer_data['phone'])
+        self.address_var.set(customer_data['address'])
 
     def save(self):
         try:

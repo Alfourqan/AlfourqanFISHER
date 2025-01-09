@@ -80,7 +80,13 @@ class SalesView:
             self.tree.delete(item)
 
         for row in cursor.fetchall():
-            self.tree.insert('', 'end', values=row)
+            row_data = dict(row)
+            self.tree.insert('', 'end', values=(
+                row_data['id'],
+                row_data['date'],
+                row_data.get('name', 'Client Anonyme'),
+                row_data['total']
+            ))
 
     def new_sale(self):
         dialog = SaleDialog(self.parent, self.db)

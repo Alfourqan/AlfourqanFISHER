@@ -41,13 +41,13 @@ class InventoryView:
         self.tree.heading('Catégorie', text='Catégorie')
         self.tree.heading('Stock', text='Stock')
         self.tree.heading('Prix', text='Prix')
-        
+
         self.tree.column('ID', width=50)
         self.tree.column('Produit', width=200)
         self.tree.column('Catégorie', width=150)
         self.tree.column('Stock', width=100)
         self.tree.column('Prix', width=100)
-        
+
         self.tree.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
     def load_categories(self):
@@ -64,19 +64,26 @@ class InventoryView:
             FROM products p
             LEFT JOIN categories c ON p.category_id = c.id
         ''')
-        
+
         for item in self.tree.get_children():
             self.tree.delete(item)
-            
+
         for row in cursor.fetchall():
-            self.tree.insert('', 'end', values=row)
+            row_data = dict(zip(['id','name','name','stock','price'],row))
+            self.tree.insert('', 'end', values=(
+                row_data['id'], 
+                row_data['name'],
+                row_data.get('name', ''),
+                row_data['stock'],
+                row_data['price']
+            ))
 
     def filter_inventory(self, *args):
         search_term = self.search_var.get().lower()
         category = self.category_var.get()
-        
+
         cursor = self.db.conn.cursor()
-        
+
         if category == 'Toutes':
             cursor.execute('''
                 SELECT p.id, p.name, c.name, p.stock, p.price 
@@ -91,12 +98,19 @@ class InventoryView:
                 LEFT JOIN categories c ON p.category_id = c.id
                 WHERE LOWER(p.name) LIKE ? AND c.name = ?
             ''', (f'%{search_term}%', category))
-        
+
         for item in self.tree.get_children():
             self.tree.delete(item)
-            
+
         for row in cursor.fetchall():
-            self.tree.insert('', 'end', values=row)
+            row_data = dict(zip(['id','name','name','stock','price'],row))
+            self.tree.insert('', 'end', values=(
+                row_data['id'], 
+                row_data['name'],
+                row_data.get('name', ''),
+                row_data['stock'],
+                row_data['price']
+            ))
 
     def adjust_stock(self):
         selection = self.tree.selection()
@@ -119,16 +133,16 @@ class StockAdjustmentDialog:
 
     def setup_ui(self):
         self.top.title("Ajuster le stock")
-        
+
         # Product info
         ttk.Label(self.top, text="Produit:").grid(row=0, column=0, padx=5, pady=5)
         self.product_label = ttk.Label(self.top, text="")
         self.product_label.grid(row=0, column=1, padx=5, pady=5)
-        
+
         ttk.Label(self.top, text="Stock actuel:").grid(row=1, column=0, padx=5, pady=5)
         self.current_stock_label = ttk.Label(self.top, text="")
         self.current_stock_label.grid(row=1, column=1, padx=5, pady=5)
-        
+
         # Adjustment
         ttk.Label(self.top, text="Ajustement:").grid(row=2, column=0, padx=5, pady=5)
         self.adjustment_var = tk.StringVar()
@@ -144,9 +158,9 @@ class StockAdjustmentDialog:
         cursor = self.db.conn.cursor()
         cursor.execute('SELECT name, stock FROM products WHERE id = ?', (self.product_id,))
         product = cursor.fetchone()
-        
+
         if product:
-            product_data = dict(product)
+            product_data = dict(zip(['name','stock'],product))
             self.product_label.config(text=product_data['name'])
             self.current_stock_label.config(text=str(product_data['stock']))
         else:
@@ -156,17 +170,17 @@ class StockAdjustmentDialog:
     def save(self):
         try:
             adjustment = float(self.adjustment_var.get())
-            
+
             cursor = self.db.conn.cursor()
             cursor.execute('''
                 UPDATE products 
                 SET stock = stock + ?
                 WHERE id = ?
             ''', (adjustment, self.product_id))
-            
+
             self.db.conn.commit()
             self.top.destroy()
-            
+
         except ValueError:
             messagebox.showerror("Erreur", "Veuillez entrer une valeur numérique valide")
         except Exception as e:

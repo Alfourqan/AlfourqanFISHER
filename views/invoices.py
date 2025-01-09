@@ -153,11 +153,12 @@ class InvoicesView:
             ''', (sale_id,))
             items = cursor.fetchall()
 
+            sale_dict = dict(sale)
             sale_data = {
-                'id': sale[0],
-                'date': sale[1],
-                'customer_name': sale[4],
-                'total': sale[3],
+                'id': sale_dict['id'],
+                'date': sale_dict['date'],
+                'customer_name': sale_dict['customer_name'],
+                'total': sale_dict['total'],
                 'items': [
                     {
                         'product_name': item[0],
