@@ -118,9 +118,7 @@ class InvoiceGenerationDialog:
             SELECT 
                 s.date, 
                 COALESCE(c.name, 'Client Anonyme') as customer_name,
-                s.total,
-                s.status,
-                s.payment_method
+                s.total
             FROM sales s 
             LEFT JOIN customers c ON s.customer_id = c.id
             WHERE s.id = ?
