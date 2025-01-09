@@ -20,22 +20,22 @@ class CategoriesView:
         self.tree = ttk.Treeview(self.parent, columns=('ID', 'Nom'), show='headings')
         self.tree.heading('ID', text='ID')
         self.tree.heading('Nom', text='Nom')
-        
+
         self.tree.column('ID', width=50)
         self.tree.column('Nom', width=300)
-        
+
         self.tree.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
-        
+
         # Bind double click for editing
         self.tree.bind('<Double-1>', self.edit_category)
 
     def load_categories(self):
         cursor = self.db.conn.cursor()
         cursor.execute('SELECT * FROM categories')
-        
+
         for item in self.tree.get_children():
             self.tree.delete(item)
-            
+
         for row in cursor.fetchall():
             row_data = dict(row)
             self.tree.insert('', 'end', values=(
@@ -66,7 +66,7 @@ class CategoryDialog:
 
     def setup_ui(self):
         self.top.title("Nouvelle Catégorie" if not self.category_id else "Modifier Catégorie")
-        
+
         # Name
         ttk.Label(self.top, text="Nom:").grid(row=0, column=0, padx=5, pady=5)
         self.name_var = tk.StringVar()
@@ -102,10 +102,10 @@ class CategoryDialog:
                     INSERT INTO categories (name)
                     VALUES (?)
                 ''', (name,))
-            
+
             self.db.conn.commit()
             self.top.destroy()
-            
+
         except Exception as e:
             messagebox.showerror("Erreur", str(e))
 
