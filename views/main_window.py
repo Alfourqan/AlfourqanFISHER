@@ -119,9 +119,9 @@ class MainWindow:
 
         self.setup_ui()
 
-        # Afficher l'écran de démarrage
-        splash = SplashScreen(self.root)
-        self.root.after(1500, self.show_login)
+        # Afficher l'écran de démarrage puis l'authentification
+        self.splash = SplashScreen(self.root)
+        self.splash.splash.after(1500, lambda: self.show_login_after_splash())
 
     def setup_ui(self):
         """Configure l'interface utilisateur principale"""
@@ -306,6 +306,11 @@ class MainWindow:
         for widget in self.content.winfo_children():
             widget.destroy()
         self.content.update_idletasks()
+
+    def show_login_after_splash(self):
+        """Affiche la page de connexion après le splash screen"""
+        self.splash.splash.destroy()
+        self.show_login()
 
     def run(self):
         """Lance l'application"""
