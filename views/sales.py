@@ -15,7 +15,8 @@ class SalesView:
         title_frame = ttk.Frame(self.parent)
         title_frame.pack(fill=tk.X, padx=5, pady=5)
         ttk.Label(title_frame, text="Gestion des Ventes", font=('Helvetica', 16, 'bold')).pack(side=tk.LEFT)
-        ttk.Button(title_frame, text="+ Nouvelle Vente", command=self.new_sale).pack(side=tk.RIGHT)
+        ttk.Button(title_frame, text="+ Nouvelle Vente", command=self.new_sale).pack(side=tk.RIGHT, padx=5)
+        ttk.Button(title_frame, text="Générer Facture", command=self.generate_invoice).pack(side=tk.RIGHT, padx=5)
 
         # Search frame
         search_frame = ttk.Frame(self.parent)
@@ -89,6 +90,108 @@ class SalesView:
         sale_id = self.tree.item(item)['values'][0]
         dialog = SaleDetailsDialog(self.parent, self.db, sale_id)
         self.parent.wait_window(dialog.top)
+
+    def generate_invoice(self):
+        selection = self.tree.selection()
+        if not selection:
+            messagebox.showwarning("Attention", "Veuillez sélectionner une vente")
+            return
+
+        dialog = InvoiceGenerationDialog(self.parent, self.db, self.tree.item(selection[0])['values'][0])
+        self.parent.wait_window(dialog.top)
+
+class InvoiceGenerationDialog:
+    def __init__(self, parent, db, sale_id):
+        self.parent = parent
+        self.db = db
+        self.sale_id = sale_id
+        self.top = tk.Toplevel(parent)
+        self.setup_ui()
+
+    def setup_ui(self):
+        self.top.title("Générer une facture")
+        self.top.geometry("400x300")
+        
+        # Sale details
+        cursor = self.db.conn.cursor()
+        cursor.execute('''
+            SELECT s.date, c.name, s.total 
+            FROM sales s 
+            LEFT JOIN customers c ON s.customer_id = c.id
+            WHERE s.id = ?
+        ''', (self.sale_id,))
+        sale = cursor.fetchone()
+
+        ttk.Label(self.top, text=f"Vente #{self.sale_id}", font=('Helvetica', 12, 'bold')).pack(pady=10)
+        ttk.Label(self.top, text=f"Date: {sale[0]}").pack()
+        ttk.Label(self.top, text=f"Client: {sale[1]}").pack()
+        ttk.Label(self.top, text=f"Total: {sale[2]} €").pack()
+
+        # Status selection
+        status_frame = ttk.LabelFrame(self.top, text="Statut de la facture")
+        status_frame.pack(fill=tk.X, padx=20, pady=20)
+        
+        self.status_var = tk.StringVar(value="complete")
+        ttk.Radiobutton(status_frame, text="Complète", 
+                       variable=self.status_var, value="complete").pack(padx=10, pady=5)
+        ttk.Radiobutton(status_frame, text="En attente", 
+                       variable=self.status_var, value="pending").pack(padx=10, pady=5)
+
+        # Buttons
+        btn_frame = ttk.Frame(self.top)
+        btn_frame.pack(fill=tk.X, padx=20, pady=20)
+        ttk.Button(btn_frame, text="Générer", command=self.generate).pack(side=tk.LEFT, padx=5)
+        ttk.Button(btn_frame, text="Annuler", command=self.top.destroy).pack(side=tk.RIGHT, padx=5)
+
+    def generate(self):
+        try:
+            cursor = self.db.conn.cursor()
+            
+            # Update sale status
+            cursor.execute('''
+                UPDATE sales 
+                SET status = ?
+                WHERE id = ?
+            ''', (self.status_var.get(), self.sale_id))
+            
+            self.db.conn.commit()
+            
+            # Generate PDF using the existing PDF generator
+            from utils.pdf_generator import PDFGenerator
+            pdf_gen = PDFGenerator()
+            
+            cursor.execute('''
+                SELECT s.*, c.name as customer_name
+                FROM sales s
+                LEFT JOIN customers c ON s.customer_id = c.id
+                WHERE s.id = ?
+            ''', (self.sale_id,))
+            sale = cursor.fetchone()
+            
+            cursor.execute('''
+                SELECT p.name, si.quantity, si.price
+                FROM sale_items si
+                JOIN products p ON si.product_id = p.id
+                WHERE si.sale_id = ?
+            ''', (self.sale_id,))
+            items = cursor.fetchall()
+            
+            sale_data = {
+                'id': sale[0],
+                'date': sale[1],
+                'customer_name': sale[4],
+                'total': sale[3],
+                'items': [{'product_name': i[0], 'quantity': i[1], 'price': i[2]} for i in items]
+            }
+            
+            filename = f"facture_{self.sale_id}.pdf"
+            pdf_gen.generate_invoice(sale_data, filename)
+            
+            messagebox.showinfo("Succès", f"La facture a été générée: {filename}")
+            self.top.destroy()
+            
+        except Exception as e:
+            messagebox.showerror("Erreur", str(e))
 
 class SaleDialog:
     def __init__(self, parent, db):
