@@ -3,6 +3,9 @@ from tkinter import ttk, messagebox
 from models.database import Database
 from utils.pdf_generator import PDFGenerator
 from datetime import datetime, timedelta
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import os
 
 class ReportsView:

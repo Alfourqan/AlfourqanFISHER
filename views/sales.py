@@ -201,8 +201,13 @@ class SaleDialog:
                 raise ValueError("Veuillez sélectionner un produit")
 
             quantity = float(self.quantity_var.get())
-            if quantity <= 0:
-                raise ValueError("La quantité doit être positive")
+            if not isinstance(quantity, (int, float)) or quantity <= 0:
+                raise ValueError("La quantité doit être un nombre positif")
+            if quantity != float(f"{quantity:.3f}"):
+                raise ValueError("La quantité ne peut pas avoir plus de 3 décimales")
+            if quantity > 1000:
+                if not messagebox.askyesno("Confirmation", f"Êtes-vous sûr de vouloir ajouter {quantity} kg ?"): 
+                    return
 
             cursor = self.db.conn.cursor()
             cursor.execute('SELECT price, stock FROM products WHERE name = ?', (product,))

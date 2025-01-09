@@ -158,8 +158,20 @@ class Database:
         cursor.execute(query, params)
         return cursor
 
+    def backup_db(self):
+        """Effectue une sauvegarde de la base de données"""
+        import shutil
+        from datetime import datetime
+        backup_dir = "backups"
+        if not os.path.exists(backup_dir):
+            os.makedirs(backup_dir)
+        backup_file = f"{backup_dir}/poissonnerie_{datetime.now().strftime('%Y%m%d_%H%M%S')}.db"
+        self.conn.commit()
+        shutil.copy2(self.db_file, backup_file)
+        
     def close(self):
         """Ferme la connexion à la base de données"""
         if self._connection:
+            self.backup_db()
             self._connection.close()
             self._connection = None
