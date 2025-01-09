@@ -115,12 +115,22 @@ class InvoiceGenerationDialog:
         # Sale details
         cursor = self.db.conn.cursor()
         cursor.execute('''
-            SELECT s.date, c.name, s.total 
+            SELECT 
+                s.date, 
+                COALESCE(c.name, 'Client Anonyme') as customer_name,
+                s.total,
+                s.status,
+                s.payment_method
             FROM sales s 
             LEFT JOIN customers c ON s.customer_id = c.id
             WHERE s.id = ?
         ''', (self.sale_id,))
         sale = cursor.fetchone()
+        
+        if not sale:
+            messagebox.showerror("Erreur", "Vente non trouvée")
+            self.top.destroy()
+            return
 
         ttk.Label(self.top, text=f"Vente #{self.sale_id}", font=('Helvetica', 12, 'bold')).pack(pady=10)
         ttk.Label(self.top, text=f"Date: {sale[0]}").pack()
